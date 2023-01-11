@@ -13,7 +13,7 @@ It was built for development purposes. All information is stored in files that c
 
 ## Download
 
-https://github.com/dualbios/FileBaseContext
+https://www.nuget.org/packages/FileBaseContext/
 
 ## Configure Database Context
 

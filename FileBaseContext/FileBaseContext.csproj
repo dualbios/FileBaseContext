@@ -15,6 +15,7 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>Entity Framework Core;entity-framework-core;EF;Data;O/RM;FileBaseContext;FileDB</PackageTags>
 		<RepositoryUrl>https://github.com/dualbios/FileBaseContext</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/dualbios/FileBaseContext</PackageProjectUrl>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<DelaySign>false</DelaySign>
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -28,6 +29,14 @@
 			<PackagePath></PackagePath>
 			<Pack>True</Pack>
 		</None>
+	</ItemGroup>
+
+	<PropertyGroup>
+		<PackageReadmeFile>readme.md</PackageReadmeFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\readme.md" Pack="true" PackagePath="\"/>
 	</ItemGroup>
 
 	<ItemGroup>

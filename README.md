@@ -18,6 +18,7 @@ https://www.nuget.org/packages/FileBaseContext/
 ## Configure Database Context
 
 - add database context to services
+
   ```cs
 services.AddDbContext<ApplicationDbContext>(options => options.UseFileBaseContextDatabase("dbUser"));
   ```

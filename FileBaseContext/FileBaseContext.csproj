@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>1.0.0-rc-1</Version>
+		<Version>1.0.1</Version>
 		<Company>k.D.g</Company>
 		<Authors>Kous</Authors>
 		<Description>File based database provider for Entity Framework Core (for development purposes)</Description>
@@ -18,8 +18,8 @@
 		<PackageProjectUrl>https://github.com/dualbios/FileBaseContext</PackageProjectUrl>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<DelaySign>false</DelaySign>
-		<AssemblyVersion>1.0.0.0</AssemblyVersion>
-		<FileVersion>1.0.0.0</FileVersion>
+		<AssemblyVersion>1.0.1.0</AssemblyVersion>
+		<FileVersion>1.0.1.0</FileVersion>
 		<RootNamespace>kDg.FileBaseContext</RootNamespace>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	</PropertyGroup>
@@ -36,7 +36,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="..\readme.md" Pack="true" PackagePath="\"/>
+		<None Include="..\readme.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -48,6 +48,10 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Properties\" />
 	</ItemGroup>
 
 </Project>

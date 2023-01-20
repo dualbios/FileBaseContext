@@ -17,20 +17,21 @@ https://www.nuget.org/packages/FileBaseContext/
 
 ## Configure Database Context
 
-- add database context to services
+add database context to services
 
-  ```cs
+```cs
 services.AddDbContext<ApplicationDbContext>(options => options.UseFileBaseContextDatabase("dbUser"));
-  ```
-- or configure the database context itself
+```
 
-   ```cs
-   protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-	{
-		optionsBuilder.UseFileStoreDatabase("my_local_db");
-		base.OnConfiguring(optionsBuilder);
-	}
-   ```
+or configure the database context itself
+
+```cs
+protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+{
+	optionsBuilder.UseFileStoreDatabase("my_local_db");
+	base.OnConfiguring(optionsBuilder);
+}
+```
 
 ## Configure Provider
 

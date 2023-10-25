@@ -110,6 +110,18 @@ public class FileBaseContextTable<TKey> : IFileBaseContextTable
     {
         var key = CreateKey(entry);
 
+        if (key.GetType().IsArray)
+        {
+            foreach (var item in _rows.Keys)
+            {
+                if (StructuralComparisons.StructuralEqualityComparer.Equals(item, key))
+                {
+                    key = item;
+                    break;
+                }
+            }
+        }
+
         if (_rows.TryGetValue(key, out object[] value))
         {
             var properties = entry.EntityType.GetProperties().ToList();

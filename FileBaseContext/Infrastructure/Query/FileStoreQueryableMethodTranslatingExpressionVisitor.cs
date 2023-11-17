@@ -370,9 +370,9 @@ public class FileBaseContextQueryableMethodTranslatingExpressionVisitor : Querya
 
     protected override ShapedQueryExpression TranslateOfType(ShapedQueryExpression source, Type resultType)
     {
-        if (source.ShaperExpression is EntityShaperExpression entityShaperExpression)
+        if (source.ShaperExpression is StructuralTypeShaperExpression entityShaperExpression)
         {
-            var entityType = entityShaperExpression.EntityType;
+            var entityType = entityShaperExpression.StructuralType;
             if (entityType.ClrType == resultType)
             {
                 return source;
@@ -389,13 +389,13 @@ public class FileBaseContextQueryableMethodTranslatingExpressionVisitor : Querya
 
             source = newSource;
 
-            var baseType = entityType.GetAllBaseTypes().SingleOrDefault(et => et.ClrType == resultType);
+            var baseType = entityType.ContainingEntityType.GetAllBaseTypes().SingleOrDefault(et => et.ClrType == resultType);
             if (baseType != null)
             {
-                return source.UpdateShaperExpression(entityShaperExpression.WithEntityType(baseType));
+                return source.UpdateShaperExpression(entityShaperExpression.WithType(baseType));
             }
 
-            var derivedType = entityType.GetDerivedTypes().Single(et => et.ClrType == resultType);
+            var derivedType = entityType.ContainingEntityType.GetDerivedTypes().Single(et => et.ClrType == resultType);
             var inMemoryQueryExpression = (FileBaseContextQueryExpression)source.QueryExpression;
 
             var projectionBindingExpression = (ProjectionBindingExpression)entityShaperExpression.ValueBufferExpression;
@@ -410,7 +410,7 @@ public class FileBaseContextQueryableMethodTranslatingExpressionVisitor : Querya
                     { projectionMember, entityProjectionExpression.UpdateEntityType(derivedType) }
                 });
 
-            return source.UpdateShaperExpression(entityShaperExpression.WithEntityType(derivedType));
+            return source.UpdateShaperExpression(entityShaperExpression.WithType(derivedType));
         }
 
         return null;
@@ -676,7 +676,7 @@ public class FileBaseContextQueryableMethodTranslatingExpressionVisitor : Querya
 
         return new ShapedQueryExpression(
             queryExpression,
-            new EntityShaperExpression(
+            new StructuralTypeShaperExpression(
                 entityType,
                 new ProjectionBindingExpression(
                     queryExpression,
@@ -709,8 +709,8 @@ public class FileBaseContextQueryableMethodTranslatingExpressionVisitor : Querya
     {
         switch (shaper1)
         {
-            case EntityShaperExpression entityShaperExpression1
-                when shaper2 is EntityShaperExpression entityShaperExpression2:
+            case StructuralTypeShaperExpression entityShaperExpression1
+                when shaper2 is StructuralTypeShaperExpression entityShaperExpression2:
                 return entityShaperExpression1.IsNullable != entityShaperExpression2.IsNullable
                     ? entityShaperExpression1.MakeNullable(makeNullable)
                     : entityShaperExpression1;
@@ -913,7 +913,7 @@ public class FileBaseContextQueryableMethodTranslatingExpressionVisitor : Querya
 
                 return memberInitExpression.Update(updatedNewExpression, newBindings);
 
-            case EntityShaperExpression entityShaperExpression
+            case StructuralTypeShaperExpression entityShaperExpression
                 when entityShaperExpression.ValueBufferExpression is ProjectionBindingExpression projectionBindingExpression:
                 return entityShaperExpression;
 
@@ -1080,7 +1080,7 @@ public class FileBaseContextQueryableMethodTranslatingExpressionVisitor : Querya
         }
 
         protected override Expression VisitExtension(Expression extensionExpression)
-            => extensionExpression is EntityShaperExpression
+            => extensionExpression is StructuralTypeShaperExpression
                || extensionExpression is ShapedQueryExpression
                || extensionExpression is GroupByShaperExpression
                 ? extensionExpression
@@ -1110,15 +1110,15 @@ public class FileBaseContextQueryableMethodTranslatingExpressionVisitor : Querya
         private Expression TryExpand(Expression source, MemberIdentity member)
         {
             source = source.UnwrapTypeConversion(out var convertedType);
-            if (source is not EntityShaperExpression entityShaperExpression)
+            if (source is not StructuralTypeShaperExpression entityShaperExpression)
             {
                 return null;
             }
 
-            var entityType = entityShaperExpression.EntityType;
+            var entityType = entityShaperExpression.StructuralType;
             if (convertedType != null)
             {
-                entityType = entityType.GetRootType().GetDerivedTypesInclusive()
+                entityType = entityType.ContainingEntityType.GetRootType().GetDerivedTypesInclusive()
                     .FirstOrDefault(et => et.ClrType == convertedType);
 
                 if (entityType == null)
@@ -1128,8 +1128,8 @@ public class FileBaseContextQueryableMethodTranslatingExpressionVisitor : Querya
             }
 
             var navigation = member.MemberInfo != null
-                ? entityType.FindNavigation(member.MemberInfo)
-                : entityType.FindNavigation(member.Name!);
+                ? entityType.ContainingEntityType.FindNavigation(member.MemberInfo)
+                : entityType.ContainingEntityType.FindNavigation(member.Name!);
 
             if (navigation == null)
             {

@@ -71,7 +71,7 @@ public class FileBaseContextProjectionBindingExpressionVisitor : ExpressionVisit
 
         if (!(expression is NewExpression
               || expression is MemberInitExpression
-              || expression is EntityShaperExpression
+              || expression is StructuralTypeShaperExpression
               || expression is IncludeExpression))
         {
             if (_indexBasedBinding)
@@ -211,7 +211,7 @@ public class FileBaseContextProjectionBindingExpressionVisitor : ExpressionVisit
 
     protected override Expression VisitExtension(Expression extensionExpression)
     {
-        if (extensionExpression is EntityShaperExpression entityShaperExpression)
+        if (extensionExpression is StructuralTypeShaperExpression entityShaperExpression)
         {
             EntityProjectionExpression entityProjectionExpression;
             if (entityShaperExpression.ValueBufferExpression is ProjectionBindingExpression projectionBindingExpression)

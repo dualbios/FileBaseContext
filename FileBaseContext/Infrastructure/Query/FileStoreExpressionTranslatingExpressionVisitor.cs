@@ -153,7 +153,7 @@ public class FileBaseContextExpressionTranslatingExpressionVisitor : ExpressionV
                 {
                     var projection = translatedSubquery.ShaperExpression;
                     if (projection is NewExpression
-                        || RemoveConvert(projection) is EntityShaperExpression { IsNullable: false }
+                        || RemoveConvert(projection) is StructuralTypeShaperExpression { IsNullable: false }
                         || RemoveConvert(projection) is CollectionResultShaperExpression)
                     {
                         var anySubquery = Expression.Call(
@@ -411,7 +411,7 @@ public class FileBaseContextExpressionTranslatingExpressionVisitor : ExpressionV
             case EntityReferenceExpression:
                 return extensionExpression;
 
-            case EntityShaperExpression entityShaperExpression:
+            case StructuralTypeShaperExpression entityShaperExpression:
                 return new EntityReferenceExpression(entityShaperExpression);
 
             case ProjectionBindingExpression projectionBindingExpression:
@@ -566,7 +566,7 @@ public class FileBaseContextExpressionTranslatingExpressionVisitor : ExpressionV
                 innerExpression = unaryExpression.Operand;
             }
 
-            if (innerExpression is EntityShaperExpression entityShaperExpression
+            if (innerExpression is StructuralTypeShaperExpression entityShaperExpression
                 && (convertedType == null
                     || convertedType.IsAssignableFrom(entityShaperExpression.Type)))
             {
@@ -1010,7 +1010,7 @@ public class FileBaseContextExpressionTranslatingExpressionVisitor : ExpressionV
 
         if (entityReferenceExpression.SubqueryEntity != null)
         {
-            var entityShaper = (EntityShaperExpression)entityReferenceExpression.SubqueryEntity.ShaperExpression;
+            var entityShaper = (StructuralTypeShaperExpression)entityReferenceExpression.SubqueryEntity.ShaperExpression;
             var inMemoryQueryExpression = (FileBaseContextQueryExpression)entityReferenceExpression.SubqueryEntity.QueryExpression;
 
             var projectionBindingExpression = (ProjectionBindingExpression)entityShaper.ValueBufferExpression;
@@ -1525,16 +1525,16 @@ public class FileBaseContextExpressionTranslatingExpressionVisitor : ExpressionV
 
     private sealed class EntityReferenceExpression : Expression
     {
-        public EntityReferenceExpression(EntityShaperExpression parameter)
+        public EntityReferenceExpression(StructuralTypeShaperExpression parameter)
         {
             ParameterEntity = parameter;
-            EntityType = parameter.EntityType;
+            EntityType = parameter.StructuralType.ContainingEntityType;
         }
 
         public EntityReferenceExpression(ShapedQueryExpression subquery)
         {
             SubqueryEntity = subquery;
-            EntityType = ((EntityShaperExpression)subquery.ShaperExpression).EntityType;
+            EntityType = ((StructuralTypeShaperExpression)subquery.ShaperExpression).StructuralType.ContainingEntityType;
         }
 
         private EntityReferenceExpression(EntityReferenceExpression entityReferenceExpression, IEntityType entityType)
@@ -1544,7 +1544,7 @@ public class FileBaseContextExpressionTranslatingExpressionVisitor : ExpressionV
             EntityType = entityType;
         }
 
-        public EntityShaperExpression ParameterEntity { get; }
+        public StructuralTypeShaperExpression ParameterEntity { get; }
         public ShapedQueryExpression SubqueryEntity { get; }
         public IEntityType EntityType { get; }
 

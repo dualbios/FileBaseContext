@@ -21,23 +21,32 @@ public class JsonDataSerializer : ISerializer
 
     public Dictionary<TKey, object[]> Deserialize<TKey>(string list, Dictionary<TKey, object[]> newList)
     {
-        if (list != String.Empty)
+        if (list != string.Empty)
         {
-            JsonArray array = JsonNode.Parse(list).AsArray();
+            JsonArray array = JsonNode.Parse(list)?.AsArray();
 
-            foreach (JsonNode node in array)
+            if (array != null)
             {
-                List<object> value = new();
-
-                for (int i = 0; i < _propertyKeys.Length; i++)
+                foreach (JsonNode node in array)
                 {
-                    object val = node[_propertyKeys[i]].GetValue<string>().Deserialize(_typeList[i]);
-                    value.Add(val);
+                    List<object> value = new();
+
+                    for (int i = 0; i < _propertyKeys.Length; i++)
+                    {
+                        JsonNode singleNode = node[_propertyKeys[i]];
+                        object val = null;
+                        if (singleNode != null)
+                        {
+                            val = singleNode.GetValue<string>().Deserialize(_typeList[i]);
+                        }
+
+                        value.Add(val);
+                    }
+
+                    TKey key = SerializerHelper.GetKey<TKey>(_keyValueFactory, _entityType, propertyName => node[propertyName].GetValue<string>());
+
+                    newList.Add(key, value.ToArray());
                 }
-
-                TKey key = SerializerHelper.GetKey<TKey>(_keyValueFactory, _entityType, propertyName => node[propertyName].GetValue<string>());
-
-                newList.Add(key, value.ToArray());
             }
         }
 

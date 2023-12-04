@@ -89,8 +89,7 @@ public static class SerializerHelper
 
         return (TKey)keyValueFactory.CreateFromKeyValues(
             entityType.FindPrimaryKey().Properties
-                .Select(p =>
-                    valueSelector(p.GetColumnName())
-                        .Deserialize(p.GetValueConverter()?.ProviderClrType ?? p.ClrType)).ToArray());
+                      .Select(p => valueSelector(p.GetColumnName())
+                                  .Deserialize(p.GetValueConverter()?.ProviderClrType ?? p.ClrType)).ToArray());
     }
 }

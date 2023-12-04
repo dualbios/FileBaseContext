@@ -51,7 +51,7 @@ public class FileBaseContextTable<TKey> : IFileBaseContextTable
 
     public void Load()
     {
-        _rows = _fileManager.Load<TKey>(_entityType, _serializer);
+        _rows = ConvertFromProvider(_fileManager.Load<TKey>(_entityType, _serializer));
     }
 
     public void Save()
@@ -94,6 +94,10 @@ public class FileBaseContextTable<TKey> : IFileBaseContextTable
     private Dictionary<TKey, object[]> ConvertToProvider(Dictionary<TKey, object[]> list)
     {
         return ApplyValueConverter(list, converter => converter.ConvertToProvider);
+    }
+    private Dictionary<TKey, object[]> ConvertFromProvider(Dictionary<TKey, object[]> list)
+    {
+        return ApplyValueConverter(list, converter => converter.ConvertFromProvider);
     }
 
     private TKey CreateKey(IUpdateEntry entry)

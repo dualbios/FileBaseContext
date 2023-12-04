@@ -71,12 +71,12 @@ public partial class FileBaseContextShapedQueryCompilingExpressionVisitor
         {
             switch (extensionExpression)
             {
-                case EntityShaperExpression entityShaperExpression:
+                case StructuralTypeShaperExpression entityShaperExpression:
                 {
                     var key = entityShaperExpression.ValueBufferExpression;
                     if (!_mapping.TryGetValue(key, out var variable))
                     {
-                        variable = Expression.Parameter(entityShaperExpression.EntityType.ClrType);
+                        variable = Expression.Parameter(entityShaperExpression.StructuralType.ClrType);
                         _variables.Add(variable);
                         var innerShaper =
                             _FileBaseContextShapedQueryCompilingExpressionVisitor.InjectEntityMaterializers(entityShaperExpression);

@@ -557,7 +557,7 @@ public partial class FileBaseContextQueryExpression : Expression, IPrintableExpr
         bool innerNullable)
         => AddJoin(innerQueryExpression, null, null, outerShaperExpression, innerShaperExpression, innerNullable);
 
-    public virtual EntityShaperExpression AddNavigationToWeakEntityType(
+    public virtual StructuralTypeShaperExpression AddNavigationToWeakEntityType(
         EntityProjectionExpression entityProjectionExpression,
         INavigation navigation,
         FileBaseContextQueryExpression innerQueryExpression,
@@ -611,7 +611,7 @@ public partial class FileBaseContextQueryExpression : Expression, IPrintableExpr
                 new ValueBuffer(
                     Enumerable.Repeat((object)null, selectorExpressions.Count - outerIndex).ToArray())));
 
-        var entityShaper = new EntityShaperExpression(innerEntityProjection.EntityType, innerEntityProjection, nullable: true);
+        var entityShaper = new StructuralTypeShaperExpression(innerEntityProjection.EntityType, innerEntityProjection, nullable: true);
         entityProjectionExpression.AddNavigationBinding(navigation, entityShaper);
 
         return entityShaper;
@@ -735,7 +735,7 @@ public partial class FileBaseContextQueryExpression : Expression, IPrintableExpr
 
                 return memberInitExpression.Update(updatedNewExpression, memberBindings);
 
-            case EntityShaperExpression entityShaperExpression
+            case StructuralTypeShaperExpression entityShaperExpression
                 when entityShaperExpression.ValueBufferExpression is ProjectionBindingExpression projectionBindingExpression:
                 var entityProjectionExpression = (EntityProjectionExpression)((FileBaseContextQueryExpression)projectionBindingExpression.QueryExpression)
                     .GetProjection(projectionBindingExpression);

@@ -1,6 +1,6 @@
 # FileBaseContext
 
-**FileBaseContext** is a provider of **Entity Framework 7** to store database information in files. 
+**FileBaseContext** is a provider of **Entity Framework Core 8** to store database information in files. 
 
 It was built for development purposes. All information is stored in files that can be added, updated, or deleted manually.
 

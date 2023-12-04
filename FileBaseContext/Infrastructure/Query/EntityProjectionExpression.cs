@@ -7,7 +7,7 @@ namespace kDg.FileBaseContext.Infrastructure.Query;
 public class EntityProjectionExpression : Expression, IPrintableExpression
 {
     private readonly IReadOnlyDictionary<IProperty, MethodCallExpression> _readExpressionMap;
-    private readonly Dictionary<INavigation, EntityShaperExpression> _navigationExpressionsCache = new();
+    private readonly Dictionary<INavigation, StructuralTypeShaperExpression> _navigationExpressionsCache = new();
 
     public EntityProjectionExpression(
         IEntityType entityType,
@@ -59,7 +59,7 @@ public class EntityProjectionExpression : Expression, IPrintableExpression
         return _readExpressionMap[property];
     }
 
-    public virtual void AddNavigationBinding(INavigation navigation, EntityShaperExpression entityShaper)
+    public virtual void AddNavigationBinding(INavigation navigation, StructuralTypeShaperExpression entityShaper)
     {
         if (!EntityType.IsAssignableFrom(navigation.DeclaringEntityType)
             && !navigation.DeclaringEntityType.IsAssignableFrom(EntityType))
@@ -71,7 +71,7 @@ public class EntityProjectionExpression : Expression, IPrintableExpression
         _navigationExpressionsCache[navigation] = entityShaper;
     }
 
-    public virtual EntityShaperExpression BindNavigation(INavigation navigation)
+    public virtual StructuralTypeShaperExpression BindNavigation(INavigation navigation)
     {
         if (!EntityType.IsAssignableFrom(navigation.DeclaringEntityType)
             && !navigation.DeclaringEntityType.IsAssignableFrom(EntityType))
@@ -91,8 +91,8 @@ public class EntityProjectionExpression : Expression, IPrintableExpression
         var entityProjectionExpression = new EntityProjectionExpression(EntityType, readExpressionMap);
         foreach (var (navigation, entityShaperExpression) in _navigationExpressionsCache)
         {
-            entityProjectionExpression._navigationExpressionsCache[navigation] = new EntityShaperExpression(
-                entityShaperExpression.EntityType,
+            entityProjectionExpression._navigationExpressionsCache[navigation] = new StructuralTypeShaperExpression(
+                entityShaperExpression.StructuralType,
                 ((EntityProjectionExpression)entityShaperExpression.ValueBufferExpression).Clone(),
                 entityShaperExpression.IsNullable);
         }

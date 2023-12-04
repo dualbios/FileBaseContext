@@ -163,7 +163,7 @@ public partial class FileBaseContextQueryExpression
     {
         protected override Expression VisitExtension(Expression extensionExpression)
         {
-            return extensionExpression is EntityShaperExpression entityShaper
+            return extensionExpression is StructuralTypeShaperExpression entityShaper
                 ? entityShaper.MakeNullable()
                 : base.VisitExtension(extensionExpression);
         }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FileBaseContextCore.Example.Data.Entities
+﻿namespace FileBaseContext.Tests.Data.Entities
 {
     public class Messurement : Base
     {

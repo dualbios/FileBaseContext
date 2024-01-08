@@ -1,4 +1,4 @@
-﻿namespace FileBaseContextCore.Example.Data.Entities;
+﻿namespace FileBaseContext.Tests.Data.Entities;
 
 public class SimpleEntity
 {

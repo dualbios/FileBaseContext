@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
-using System.Threading.Tasks;
-using FileBaseContextCore.Example.Data.Entities;
 
-namespace FileBaseContextCore.Example.Data.Entities
+namespace FileBaseContext.Tests.Data.Entities
 {
     [DataContract]
     public class User : Base

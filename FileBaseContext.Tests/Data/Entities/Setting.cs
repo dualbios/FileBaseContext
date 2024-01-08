@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FileBaseContextCore.Example.Data.Entities
+namespace FileBaseContext.Tests.Data.Entities
 {
     public class Setting : Base
     {

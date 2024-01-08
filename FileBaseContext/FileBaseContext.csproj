@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>2.0.0</Version>
+		<Version>2.1.0</Version>
 		<Company>k.D.g</Company>
 		<Authors>Kous</Authors>
 		<Description>File based database provider for Entity Framework Core (for development purposes)</Description>
@@ -18,11 +18,17 @@
 		<PackageProjectUrl>https://github.com/dualbios/FileBaseContext</PackageProjectUrl>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<DelaySign>false</DelaySign>
-		<AssemblyVersion>2.0.0.0</AssemblyVersion>
-		<FileVersion>2.0.0.0</FileVersion>
+		<AssemblyVersion>2.1.0.0</AssemblyVersion>
+		<FileVersion>2.1.0.0</FileVersion>
 		<RootNamespace>kDg.FileBaseContext</RootNamespace>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Properties\**" />
+	  <EmbeddedResource Remove="Properties\**" />
+	  <None Remove="Properties\**" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<None Include="..\LICENSE" Link="LICENSE">
@@ -48,10 +54,8 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Properties\" />
+		<PackageReference Include="System.IO.Abstractions" Version="20.0.4" />
+		<PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="20.0.4" />
 	</ItemGroup>
 
 </Project>

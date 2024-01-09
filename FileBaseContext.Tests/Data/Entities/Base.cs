@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace FileBaseContextCore.Example.Data.Entities
+namespace FileBaseContext.Tests.Data.Entities
 {
     public class Base
     {

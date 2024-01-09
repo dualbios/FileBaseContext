@@ -2,19 +2,20 @@
 using kDg.FileBaseContext.Storage;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using System.Security.Cryptography.X509Certificates;
 
 namespace kDg.FileBaseContext.Infrastructure;
 
 public class FileBaseContextOptionsExtension : IDbContextOptionsExtension
 {
+    private readonly Action<IServiceCollection> _applyServices;
     private readonly FileBaseContextScopedOptions _options = new();
-    private bool _nullabilityCheckEnabled;
     private FileBaseContextDatabaseRoot _databaseRoot;
+    private bool _nullabilityCheckEnabled;
 
-    public FileBaseContextOptionsExtension(string databaseName = null, string location = null)
+    public FileBaseContextOptionsExtension(string databaseName = null, string location = null, Action<IServiceCollection> applyServices = null)
     {
-        _options = new(databaseName, location);
+        _applyServices = applyServices;
+        _options = new FileBaseContextScopedOptions(databaseName, location);
     }
 
     protected FileBaseContextOptionsExtension(FileBaseContextOptionsExtension copyFrom)
@@ -24,21 +25,27 @@ public class FileBaseContextOptionsExtension : IDbContextOptionsExtension
 
     public FileBaseContextDatabaseRoot DatabaseRoot => _databaseRoot;
 
-    public DbContextOptionsExtensionInfo Info => new FileBaseContextOptionsExtensionInfo(this);
-
     public virtual bool IsNullabilityCheckEnabled => _nullabilityCheckEnabled;
 
     public FileBaseContextScopedOptions Options => _options;
 
-    protected virtual FileBaseContextOptionsExtension Clone() => new(this);
-
     public void ApplyServices(IServiceCollection services)
     {
         services.AddEntityFrameworkFileBaseContextDatabase();
+
+        services.AddFileSystem();
+        _applyServices?.Invoke(services);
     }
+
+    public DbContextOptionsExtensionInfo Info => new FileBaseContextOptionsExtensionInfo(this);
 
     public void Validate(IDbContextOptions options)
     {
+    }
+
+    protected virtual FileBaseContextOptionsExtension Clone()
+    {
+        return new FileBaseContextOptionsExtension(this);
     }
 
     public virtual FileBaseContextOptionsExtension WithDatabaseRoot(FileBaseContextDatabaseRoot databaseRoot)
@@ -73,7 +80,7 @@ public class FileBaseContextOptionsExtension : IDbContextOptionsExtension
 
         public override int GetServiceProviderHashCode()
         {
-            return this.GetHashCode();
+            return GetHashCode();
         }
 
         public override void PopulateDebugInfo(IDictionary<string, string> debugInfo)
@@ -82,8 +89,10 @@ public class FileBaseContextOptionsExtension : IDbContextOptionsExtension
         }
 
         public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other)
-            => other is FileBaseContextOptionsExtensionInfo otherInfo
-               && Extension._databaseRoot == otherInfo.Extension._databaseRoot
-               && Extension._nullabilityCheckEnabled == otherInfo.Extension._nullabilityCheckEnabled;
+        {
+            return other is FileBaseContextOptionsExtensionInfo otherInfo
+                   && Extension._databaseRoot == otherInfo.Extension._databaseRoot
+                   && Extension._nullabilityCheckEnabled == otherInfo.Extension._nullabilityCheckEnabled;
+        }
     }
 }

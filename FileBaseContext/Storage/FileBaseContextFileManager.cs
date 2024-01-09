@@ -1,27 +1,34 @@
-﻿using kDg.FileBaseContext.Serializers;
+﻿using System.IO.Abstractions;
+using System.Text;
+using kDg.FileBaseContext.Serializers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using System.Text;
 
 namespace kDg.FileBaseContext.Storage;
 
 public class FileBaseContextFileManager : IFileBaseContextFileManager
 {
+    private readonly IFileSystem _fileSystem;
     private readonly string _filetype = ".json";
     private string _databasename = "";
     private string _location;
+
+    public FileBaseContextFileManager(IFileSystem fileSystem)
+    {
+        _fileSystem = fileSystem;
+    }
 
     public string GetFileName(IEntityType _entityType)
     {
         string name = _entityType.GetTableName().GetValidFileName();
 
         string path = string.IsNullOrEmpty(_location)
-            ? Path.Combine(AppContext.BaseDirectory, _databasename)
+            ? _fileSystem.Path.Combine(AppContext.BaseDirectory, _databasename)
             : _location;
 
-        Directory.CreateDirectory(path);
+        _fileSystem.Directory.CreateDirectory(path);
 
-        return Path.Combine(path, name + _filetype);
+        return _fileSystem.Path.Combine(path, name + _filetype);
     }
 
     public void Init(IFileBaseContextScopedOptions options)
@@ -35,9 +42,9 @@ public class FileBaseContextFileManager : IFileBaseContextFileManager
         string path = GetFileName(_entityType);
 
         string content = "";
-        if (File.Exists(path))
+        if (_fileSystem.File.Exists(path))
         {
-            content = File.ReadAllText(path);
+            content = _fileSystem.File.ReadAllText(path);
         }
 
         Dictionary<TKey, object[]> rows = new Dictionary<TKey, object[]>();
@@ -50,6 +57,6 @@ public class FileBaseContextFileManager : IFileBaseContextFileManager
     {
         string content = serializer.Serialize(objectsMap);
         string path = GetFileName(_entityType);
-        File.WriteAllText(path, content);
+        _fileSystem.File.WriteAllText(path, content);
     }
 }

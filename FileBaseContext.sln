@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileBaseContext", "FileBase
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileBaseContext.Example", "FileBaseContext.Example\FileBaseContext.Example.csproj", "{669FEEAB-64DF-4D01-A882-A9F3A525BB08}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileBaseContext.Tests", "FileBaseContext.Tests\FileBaseContext.Tests.csproj", "{9BDE010D-DBB0-4A53-A066-ED5030C42ED8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{669FEEAB-64DF-4D01-A882-A9F3A525BB08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{669FEEAB-64DF-4D01-A882-A9F3A525BB08}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{669FEEAB-64DF-4D01-A882-A9F3A525BB08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BDE010D-DBB0-4A53-A066-ED5030C42ED8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BDE010D-DBB0-4A53-A066-ED5030C42ED8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BDE010D-DBB0-4A53-A066-ED5030C42ED8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BDE010D-DBB0-4A53-A066-ED5030C42ED8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

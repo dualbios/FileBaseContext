@@ -1,12 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
+using System.Collections.Concurrent;
 using System.Globalization;
+using System.Text;
 
 namespace kDg.FileBaseContext.Serializers;
 
 public static class SerializerHelper
 {
+    private static readonly ConcurrentDictionary<Type, ArraySerializer> s_arraySerializers = [];
+
     public static object Deserialize(this string input, Type type)
     {
         if (string.IsNullOrEmpty(input))
@@ -33,15 +37,9 @@ public static class SerializerHelper
 
         if (type.IsArray)
         {
-            Type arrType = type.GetElementType();
-            List<object> arr = new List<object>();
-
-            foreach (string s in input.Split(','))
-            {
-                arr.Add(s.Deserialize(arrType));
-            }
-
-            return arr.ToArray();
+            Type elementType = type.GetElementType();
+            var arraySerializer = GetOrCreateArraySerializer(elementType);
+            return arraySerializer.Deserialize(input);
         }
 
         if (type.IsEnum)
@@ -56,23 +54,13 @@ public static class SerializerHelper
     {
         if (input != null)
         {
-            if (input.GetType().IsArray)
+            var inputType = input.GetType();
+
+            if (inputType.IsArray)
             {
-                string result = "";
-
-                object[] arr = (object[])input;
-
-                for (int i = 0; i < arr.Length; i++)
-                {
-                    result += arr[i].Serialize();
-
-                    if (i + 1 < arr.Length)
-                    {
-                        result += ",";
-                    }
-                }
-
-                return result;
+                Type elementType = inputType.GetElementType();
+                var arraySerializer = GetOrCreateArraySerializer(elementType);
+                return arraySerializer.Serialize(input);
             }
 
             return input is IFormattable formattable
@@ -91,5 +79,66 @@ public static class SerializerHelper
             entityType.FindPrimaryKey().Properties
                       .Select(p => valueSelector(p.GetColumnName())
                                   .Deserialize(p.GetValueConverter()?.ProviderClrType ?? p.ClrType)).ToArray());
+    }
+
+    private static ArraySerializer GetOrCreateArraySerializer(Type elementType)
+    {
+        return s_arraySerializers.GetOrAdd(elementType, CreateArraySerializer);
+
+        static ArraySerializer CreateArraySerializer(Type elementType)
+        {
+            var closedType = typeof(ArraySerializer<>).MakeGenericType(elementType);
+            return (ArraySerializer)Activator.CreateInstance(closedType);
+        }
+    }
+
+    private abstract class ArraySerializer
+    {
+        public abstract object Deserialize(string value);
+
+        public abstract string Serialize(object value);
+    }
+
+    /// <summary>
+    /// Arrays of value types are not covariant
+    /// so need to be handled with a generic handler per type.
+    /// Arrays of reference types _are_ covariant and could be handled by an <c>object[]</c> handler,
+    /// but the call to <see cref="SerializerHelper.Deserialize(string, Type)"/>
+    /// still requires a <see cref="Type"/> variable,
+    /// and so using this wrapper for reference types as well is a convenient factoring.
+    /// </summary>
+    /// <typeparam name="T">The element type of the array to serialize.</typeparam>
+    private sealed class ArraySerializer<T>
+        : ArraySerializer
+    {
+        public override object Deserialize(string value)
+        {
+            var result = new List<T>();
+
+            foreach (var item in value.Split(','))
+                result.Add((T)item.Deserialize(typeof(T)));
+
+            return result.ToArray();
+        }
+
+        public override string Serialize(object value)
+        {
+            var array = (T[])value;
+            if (array.Length == 0)
+                return string.Empty;
+
+            var resultBuilder = new StringBuilder();
+            var separator = string.Empty;
+
+            foreach (var item in array)
+            {
+                resultBuilder.Append(separator);
+                separator = ",";
+
+                resultBuilder.Append(item.Serialize());
+            }
+
+            return resultBuilder.ToString();
+        }
     }
 }

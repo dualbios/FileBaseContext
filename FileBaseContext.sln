@@ -7,7 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileBaseContext", "FileBase
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileBaseContext.Example", "FileBaseContext.Example\FileBaseContext.Example.csproj", "{669FEEAB-64DF-4D01-A882-A9F3A525BB08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileBaseContext.Tests", "FileBaseContext.Tests\FileBaseContext.Tests.csproj", "{9BDE010D-DBB0-4A53-A066-ED5030C42ED8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileBaseContext.Tests", "FileBaseContext.Tests\FileBaseContext.Tests.csproj", "{9BDE010D-DBB0-4A53-A066-ED5030C42ED8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0863B497-2D80-49A6-A246-E2F692FC3CB1}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

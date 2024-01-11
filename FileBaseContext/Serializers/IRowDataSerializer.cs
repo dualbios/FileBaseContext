@@ -4,7 +4,7 @@ public interface IRowDataSerializer
 {
     string FileExtension { get; }
 
-    string Serialize<TKey>(Dictionary<TKey, object[]> list);
+    void Serialize<TKey>(Stream stream, IReadOnlyDictionary<TKey, object[]> source);
 
-    Dictionary<TKey, object[]> Deserialize<TKey>(string list, Dictionary<TKey, object[]> newList);
+    void Deserialize<TKey>(Stream stream, Dictionary<TKey, object[]> result);
 }

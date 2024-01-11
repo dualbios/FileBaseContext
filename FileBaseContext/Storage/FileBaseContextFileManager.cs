@@ -38,24 +38,25 @@ public class FileBaseContextFileManager : IFileBaseContextFileManager
 
     public Dictionary<TKey, object[]> Load<TKey>(IEntityType _entityType, IRowDataSerializer serializer)
     {
-        string path = GetFileName(_entityType, serializer);
-
-        string content = "";
-        if (_fileSystem.File.Exists(path))
+        var rows = new Dictionary<TKey, object[]>();
+        try
         {
-            content = _fileSystem.File.ReadAllText(path);
+            string path = GetFileName(_entityType, serializer);
+            using var stream = _fileSystem.File.OpenRead(path);
+            serializer.Deserialize(stream, rows);
         }
-
-        Dictionary<TKey, object[]> rows = new Dictionary<TKey, object[]>();
-        serializer.Deserialize(content, rows);
+        catch (Exception ex)
+        when (ex is FileNotFoundException or DirectoryNotFoundException)
+        {
+        }
 
         return rows;
     }
 
     public void Save<TKey>(IEntityType _entityType, Dictionary<TKey, object[]> objectsMap, IRowDataSerializer serializer)
     {
-        string content = serializer.Serialize(objectsMap);
         string path = GetFileName(_entityType, serializer);
-        _fileSystem.File.WriteAllText(path, content);
+        using var stream = _fileSystem.File.Create(path);
+        serializer.Serialize(stream, objectsMap);
     }
 }

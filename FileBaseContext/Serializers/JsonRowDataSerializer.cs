@@ -1,30 +1,35 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Diagnostics;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 
 namespace kDg.FileBaseContext.Serializers;
 
 public class JsonRowDataSerializer : IRowDataSerializer
 {
-    private readonly JsonSerializerOptions _jsonOptions = new()
-    {
-        AllowTrailingCommas = true,
-        WriteIndented = true,
-    };
-
     private readonly IEntityType _entityType;
     private readonly object _keyValueFactory;
-    private string[] _propertyKeys;
-    private Type[] _typeList;
+    private readonly int[] _keyColumns;
+    private readonly JsonSerializerOptions _jsonOptions;
 
     public JsonRowDataSerializer(IEntityType entityType, object keyValueFactory)
     {
         _entityType = entityType;
         _keyValueFactory = keyValueFactory;
-        _propertyKeys = _entityType.GetProperties().Select(p => p.GetColumnName()).ToArray();
-        _typeList = _entityType.GetProperties().Select(p => p.GetValueConverter()?.ProviderClrType ?? p.ClrType).ToArray();
+        _keyColumns = CreateKeyColumnsLookup(entityType);
+        _jsonOptions = CreateJsonOptions(entityType);
+
+        static int[] CreateKeyColumnsLookup(IEntityType entityType)
+        {
+            var columnNames = entityType.GetProperties()
+                .Select(p => p.GetColumnName())
+                .ToArray();
+
+            return entityType.FindPrimaryKey().Properties
+                .Select(p => Array.IndexOf(columnNames, p.GetColumnName()))
+                .ToArray();
+        }
     }
 
     public string FileExtension => ".json";
@@ -37,52 +42,51 @@ public class JsonRowDataSerializer : IRowDataSerializer
             return;
         }
 
-        var array = JsonSerializer.Deserialize<JsonArray>(stream, _jsonOptions);
-        if (array == null)
+        var rowsData = JsonSerializer.Deserialize<List<JsonRowData>>(stream, _jsonOptions);
+        if (rowsData == null)
         {
             return;
         }
 
-        foreach (JsonNode node in array)
+        var keyValueFactory = (IPrincipalKeyValueFactory<TKey>)_keyValueFactory;
+        var keyValues = new object[_keyColumns.Length];
+        foreach (var rowData in rowsData)
         {
-            List<object> value = new();
+            var columnValues = rowData.ColumnValues;
 
-            for (int i = 0; i < _propertyKeys.Length; i++)
-            {
-                JsonNode singleNode = node[_propertyKeys[i]];
-                object val = null;
-                if (singleNode != null)
-                {
-                    val = singleNode.GetValue<string>().Deserialize(_typeList[i]);
-                }
+            for (int i = 0; i < keyValues.Length; i++)
+                keyValues[i] = columnValues[_keyColumns[i]];
 
-                value.Add(val);
-            }
-
-            TKey key = SerializerHelper.GetKey<TKey>(_keyValueFactory, _entityType, propertyName => node[propertyName].GetValue<string>());
-
-            result.Add(key, value.ToArray());
+            var key = (TKey)keyValueFactory.CreateFromKeyValues(keyValues);
+            result.Add(key, columnValues);
         }
     }
 
     public void Serialize<TKey>(Stream stream, IReadOnlyDictionary<TKey, object[]> source)
     {
-        JsonArray array = new JsonArray();
-
-        foreach (KeyValuePair<TKey, object[]> val in source)
-        {
-            var jsonObject = new JsonObject();
-
-            for (int i = 0; i < _propertyKeys.Length; i++)
-            {
-                var property = KeyValuePair.Create<string, JsonNode>(_propertyKeys[i], val.Value[i].Serialize());
-                jsonObject.Add(property);
-            }
-
-            array.Add(jsonObject);
-        }
+        var rowsData = new List<JsonRowData>(source.Count);
+        foreach (var columnValues in source.Values)
+            rowsData.Add(new(columnValues));
 
         Debug.Assert(stream.Length == 0);
-        JsonSerializer.Serialize(stream, array, _jsonOptions);
+        JsonSerializer.Serialize(stream, rowsData, _jsonOptions);
+    }
+
+    internal static JsonSerializerOptions CreateJsonOptions(IEntityType entityType)
+    {
+        return CreateJsonOptions(JsonColumnInfo.FromEntityType(entityType));
+    }
+
+    internal static JsonSerializerOptions CreateJsonOptions(IEnumerable<JsonColumnInfo> columns)
+    {
+        return new JsonSerializerOptions()
+        {
+            AllowTrailingCommas = true,
+            WriteIndented = true,
+            Converters =
+            {
+                new JsonRowDataConverter(columns),
+            },
+        };
     }
 }

@@ -9,7 +9,7 @@ public interface IFileBaseContextFileManager
 
     string GetFileName(IEntityType _entityType);
 
-    Dictionary<TKey, object[]> Load<TKey>(IEntityType _entityType, ISerializer serializer);
+    Dictionary<TKey, object[]> Load<TKey>(IEntityType _entityType, IRowDataSerializer serializer);
 
-    void Save<TKey>(IEntityType _entityType, Dictionary<TKey, object[]> objectsMap, ISerializer serializer);
+    void Save<TKey>(IEntityType _entityType, Dictionary<TKey, object[]> objectsMap, IRowDataSerializer serializer);
 }

@@ -37,7 +37,7 @@ public class FileBaseContextFileManager : IFileBaseContextFileManager
         _location = options.Location;
     }
 
-    public Dictionary<TKey, object[]> Load<TKey>(IEntityType _entityType, ISerializer serializer)
+    public Dictionary<TKey, object[]> Load<TKey>(IEntityType _entityType, IRowDataSerializer serializer)
     {
         string path = GetFileName(_entityType);
 
@@ -53,7 +53,7 @@ public class FileBaseContextFileManager : IFileBaseContextFileManager
         return rows;
     }
 
-    public void Save<TKey>(IEntityType _entityType, Dictionary<TKey, object[]> objectsMap, ISerializer serializer)
+    public void Save<TKey>(IEntityType _entityType, Dictionary<TKey, object[]> objectsMap, IRowDataSerializer serializer)
     {
         string content = serializer.Serialize(objectsMap);
         string path = GetFileName(_entityType);

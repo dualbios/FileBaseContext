@@ -4,14 +4,14 @@ using System.Text.Json.Nodes;
 
 namespace kDg.FileBaseContext.Serializers;
 
-public class JsonDataSerializer : ISerializer
+public class JsonRowDataSerializer : IRowDataSerializer
 {
     private readonly IEntityType _entityType;
     private readonly object _keyValueFactory;
     private string[] _propertyKeys;
     private Type[] _typeList;
 
-    public JsonDataSerializer(IEntityType entityType, object keyValueFactory)
+    public JsonRowDataSerializer(IEntityType entityType, object keyValueFactory)
     {
         _entityType = entityType;
         _keyValueFactory = keyValueFactory;

@@ -1,6 +1,6 @@
 ﻿namespace kDg.FileBaseContext.Serializers;
 
-public interface ISerializer
+public interface IRowDataSerializer
 {
     string Serialize<TKey>(Dictionary<TKey, object[]> list);
 

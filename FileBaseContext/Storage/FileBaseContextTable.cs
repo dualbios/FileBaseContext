@@ -19,7 +19,7 @@ public class FileBaseContextTable<TKey> : IFileBaseContextTable
     private readonly IFileBaseContextScopedOptions _options;
     private readonly IKey _primaryKey;
     private Dictionary<TKey, object[]> _rows = new Dictionary<TKey, object[]>();
-    private readonly ISerializer _serializer;
+    private readonly IRowDataSerializer _serializer;
     private IPrincipalKeyValueFactory<TKey> _keyValueFactory = null;
 
     private Dictionary<int, IFileBaseContextIntegerValueGenerator> _integerGenerators;
@@ -31,7 +31,7 @@ public class FileBaseContextTable<TKey> : IFileBaseContextTable
         _options = options;
         _primaryKey = entityType.FindPrimaryKey();
         _keyValueFactory = _primaryKey.GetPrincipalKeyValueFactory<TKey>();
-        _serializer = new JsonDataSerializer(entityType, _keyValueFactory);
+        _serializer = new JsonRowDataSerializer(entityType, _keyValueFactory);
 
         _fileManager.Init(_options);
 

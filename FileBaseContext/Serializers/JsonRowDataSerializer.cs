@@ -19,6 +19,8 @@ public class JsonRowDataSerializer : IRowDataSerializer
         _typeList = _entityType.GetProperties().Select(p => p.GetValueConverter()?.ProviderClrType ?? p.ClrType).ToArray();
     }
 
+    public string FileExtension => ".json";
+
     public Dictionary<TKey, object[]> Deserialize<TKey>(string list, Dictionary<TKey, object[]> newList)
     {
         if (list != string.Empty)

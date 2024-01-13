@@ -1,15 +1,14 @@
-﻿using System.IO.Abstractions;
-using System.Text;
-using kDg.FileBaseContext.Serializers;
+﻿using kDg.FileBaseContext.Serializers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using System.IO.Abstractions;
+using System.Text;
 
 namespace kDg.FileBaseContext.Storage;
 
 public class FileBaseContextFileManager : IFileBaseContextFileManager
 {
     private readonly IFileSystem _fileSystem;
-    private readonly string _filetype = ".json";
     private string _databasename = "";
     private string _location;
 
@@ -18,7 +17,7 @@ public class FileBaseContextFileManager : IFileBaseContextFileManager
         _fileSystem = fileSystem;
     }
 
-    public string GetFileName(IEntityType _entityType)
+    public string GetFileName(IEntityType _entityType, IRowDataSerializer serializer)
     {
         string name = _entityType.GetTableName().GetValidFileName();
 
@@ -28,7 +27,7 @@ public class FileBaseContextFileManager : IFileBaseContextFileManager
 
         _fileSystem.Directory.CreateDirectory(path);
 
-        return _fileSystem.Path.Combine(path, name + _filetype);
+        return _fileSystem.Path.Combine(path, name + serializer.FileExtension);
     }
 
     public void Init(IFileBaseContextScopedOptions options)
@@ -39,7 +38,7 @@ public class FileBaseContextFileManager : IFileBaseContextFileManager
 
     public Dictionary<TKey, object[]> Load<TKey>(IEntityType _entityType, IRowDataSerializer serializer)
     {
-        string path = GetFileName(_entityType);
+        string path = GetFileName(_entityType, serializer);
 
         string content = "";
         if (_fileSystem.File.Exists(path))
@@ -56,7 +55,7 @@ public class FileBaseContextFileManager : IFileBaseContextFileManager
     public void Save<TKey>(IEntityType _entityType, Dictionary<TKey, object[]> objectsMap, IRowDataSerializer serializer)
     {
         string content = serializer.Serialize(objectsMap);
-        string path = GetFileName(_entityType);
+        string path = GetFileName(_entityType, serializer);
         _fileSystem.File.WriteAllText(path, content);
     }
 }

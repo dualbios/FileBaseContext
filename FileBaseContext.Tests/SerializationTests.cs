@@ -70,7 +70,7 @@ namespace FileBaseContext.Tests
                 db.Add(new EntityHasByteArray()
                 {
                     Id = 1,
-                    ByteArray = [],
+                    ByteArray = new byte [] {},
                 });
                 db.SaveChanges();
             }
@@ -91,7 +91,7 @@ namespace FileBaseContext.Tests
                 db.Add(new EntityHasByteArray()
                 {
                     Id = 1,
-                    ByteArray = [0x00, 0x01, 0x02, 0x03],
+                    ByteArray = new byte[] {0x00, 0x01, 0x02, 0x03},
                 });
                 db.SaveChanges();
             }
@@ -147,10 +147,13 @@ namespace FileBaseContext.Tests
         protected override TestDbContext CreateDbContext(DbContextOptions<TestDbContext> options)
             => new(options);
 
-        public sealed class TestDbContext(
-            DbContextOptions<TestDbContext> options)
-            : DbContext(options)
+        public sealed class TestDbContext
+            : DbContext
         {
+            public TestDbContext(DbContextOptions<TestDbContext> options) : base(options)
+            {
+            }
+
             public DbSet<EntityHasByteArray> EntitiesHaveByteArrays { get; set; } = null!;
             public DbSet<EntityHasNullables> EntitiesHaveNullables { get; set; } = null!;
         }

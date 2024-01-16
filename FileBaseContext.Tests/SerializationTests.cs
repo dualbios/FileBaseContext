@@ -147,12 +147,10 @@ namespace FileBaseContext.Tests
         protected override TestDbContext CreateDbContext(DbContextOptions<TestDbContext> options)
             => new(options);
 
-        public sealed class TestDbContext
-            : DbContext
+        public sealed class TestDbContext(
+                DbContextOptions<TestDbContext> options)
+            : DbContext(options)
         {
-            public TestDbContext(DbContextOptions<TestDbContext> options) : base(options)
-            {
-            }
 
             public DbSet<EntityHasByteArray> EntitiesHaveByteArrays { get; set; } = null!;
             public DbSet<EntityHasNullables> EntitiesHaveNullables { get; set; } = null!;

@@ -1,15 +1,14 @@
-﻿using System.IO.Abstractions;
-using System.Text;
-using kDg.FileBaseContext.Serializers;
+﻿using kDg.FileBaseContext.Serializers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using System.IO.Abstractions;
+using System.Text;
 
 namespace kDg.FileBaseContext.Storage;
 
 public class FileBaseContextFileManager : IFileBaseContextFileManager
 {
     private readonly IFileSystem _fileSystem;
-    private readonly string _filetype = ".json";
     private string _databasename = "";
     private string _location;
 
@@ -18,7 +17,7 @@ public class FileBaseContextFileManager : IFileBaseContextFileManager
         _fileSystem = fileSystem;
     }
 
-    public string GetFileName(IEntityType _entityType)
+    public string GetFileName(IEntityType _entityType, IRowDataSerializer serializer)
     {
         string name = _entityType.GetTableName().GetValidFileName();
 
@@ -28,7 +27,7 @@ public class FileBaseContextFileManager : IFileBaseContextFileManager
 
         _fileSystem.Directory.CreateDirectory(path);
 
-        return _fileSystem.Path.Combine(path, name + _filetype);
+        return _fileSystem.Path.Combine(path, name + serializer.FileExtension);
     }
 
     public void Init(IFileBaseContextScopedOptions options)
@@ -37,26 +36,27 @@ public class FileBaseContextFileManager : IFileBaseContextFileManager
         _location = options.Location;
     }
 
-    public Dictionary<TKey, object[]> Load<TKey>(IEntityType _entityType, ISerializer serializer)
+    public Dictionary<TKey, object[]> Load<TKey>(IEntityType _entityType, IRowDataSerializer serializer)
     {
-        string path = GetFileName(_entityType);
-
-        string content = "";
-        if (_fileSystem.File.Exists(path))
+        var rows = new Dictionary<TKey, object[]>();
+        try
         {
-            content = _fileSystem.File.ReadAllText(path);
+            string path = GetFileName(_entityType, serializer);
+            using var stream = _fileSystem.File.OpenRead(path);
+            serializer.Deserialize(stream, rows);
         }
-
-        Dictionary<TKey, object[]> rows = new Dictionary<TKey, object[]>();
-        serializer.Deserialize(content, rows);
+        catch (Exception ex)
+        when (ex is FileNotFoundException or DirectoryNotFoundException)
+        {
+        }
 
         return rows;
     }
 
-    public void Save<TKey>(IEntityType _entityType, Dictionary<TKey, object[]> objectsMap, ISerializer serializer)
+    public void Save<TKey>(IEntityType _entityType, Dictionary<TKey, object[]> objectsMap, IRowDataSerializer serializer)
     {
-        string content = serializer.Serialize(objectsMap);
-        string path = GetFileName(_entityType);
-        _fileSystem.File.WriteAllText(path, content);
+        string path = GetFileName(_entityType, serializer);
+        using var stream = _fileSystem.File.Create(path);
+        serializer.Serialize(stream, objectsMap);
     }
 }

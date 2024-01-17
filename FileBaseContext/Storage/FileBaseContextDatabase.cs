@@ -24,6 +24,8 @@ public class FileBaseContextDatabase : Database, IFileBaseContextDatabase
         _updateAdapterFactory = updateAdapterFactory;
     }
 
+    public IFileBaseContextStore Store => _store;
+
     public override int SaveChanges(IList<IUpdateEntry> entries)
     {
         return _store.ExecuteTransaction(entries);

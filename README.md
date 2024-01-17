@@ -68,3 +68,21 @@ protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 }
 ```
 Please find example in the SimplePositiveTests class in the test project
+
+## ! Braking changes in 3.0.0 !
+
+In 3.0.0 version the provider was changed to support numeric values without quotation marks.
+
+```
+{
+    "IntProp": 42,
+    "LongProperty": 420,
+    "DateTime": "2023-12-26T19:28:08"
+}
+```
+
+The led to breaking changes in the provider. If you have used the provider before, you need to manualy update the database files. 
+The changes also affect on DateTime and DateTimeOffset values. The values are stored as string in the database.
+First run of the application could be slow becasuse a lot of System.Text.Json.JsonException will be provided.
+Performance be fixed after provider saves a database to files. While that the data will be stored in new formats.
+If you still have performance issues you need to manualy update the database files.

@@ -179,6 +179,43 @@ namespace FileBaseContext.Tests.Serializers
             Assert.AreEqual(typeof(int), result[1][0].GetType());
             Assert.AreEqual(typeof(int), result[1][1].GetType());
         }
+        
+        [TestMethod]
+        public void DeserializeBool_FromBooleanOrString()
+        {
+            var result = Deserialize(
+                [
+                    new("Value", typeof(bool)),
+                    new("Nullable", typeof(bool?)),
+                ],
+                """
+                [
+                  {
+                    "Nullable": null
+                  },
+                  {
+                    "Value": false,
+                    "Nullable": null
+                  },
+                  {
+                    "Value": "true",
+                    "Nullable": "false"
+                  }
+                ]
+                """);
+
+            Assert.AreEqual(false, result[0][0]);
+            Assert.IsNull(result[0][1]);
+
+            Assert.AreEqual(false, result[1][0]);
+            Assert.IsNull(result[1][1]);
+
+            Assert.AreEqual(true, result[2][0]);
+            Assert.AreEqual(false, result[2][1]);
+
+            Assert.AreEqual(typeof(bool), result[1][0].GetType());
+            Assert.IsNull(result[1][1]?.GetType());
+        }
 
         [TestMethod]
         public void DeserializeLong_FromNumberOrString()
@@ -427,6 +464,24 @@ namespace FileBaseContext.Tests.Serializers
 
             AssertStrings(
                 "[\r\n  {\r\n    \"Value\": 0,\r\n    \"Nullable\": null\r\n  },\r\n  {\r\n    \"Value\": 10,\r\n    \"Nullable\": 11\r\n  }\r\n]",
+                json);
+        }
+
+        [TestMethod]
+        public void SerializeBool()
+        {
+            var json = Serialize(
+                [
+                    new("Value", typeof(bool)),
+                    new("Nullable", typeof(bool?)),
+                ],
+                [
+                    [true, null],
+                    [false, true],
+                ]);
+
+            AssertStrings(
+                "[\r\n  {\r\n    \"Value\": true,\r\n    \"Nullable\": null\r\n  },\r\n  {\r\n    \"Value\": false,\r\n    \"Nullable\": true\r\n  }\r\n]",
                 json);
         }
 

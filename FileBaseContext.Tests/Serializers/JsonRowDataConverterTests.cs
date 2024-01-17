@@ -374,9 +374,8 @@ namespace FileBaseContext.Tests.Serializers
                 [
                 ]);
 
-            Assert.AreEqual("""
-                []
-                """,
+            AssertStrings(
+                "[]",
                 json);
         }
 
@@ -390,12 +389,9 @@ namespace FileBaseContext.Tests.Serializers
                     [],
                 ]);
 
-            Assert.AreEqual("""
-                [
-                  {}
-                ]
-                """,
-                json);
+            AssertStrings(
+                 "[\r\n  {}\r\n]",
+                 json);
         }
 
         [TestMethod]
@@ -411,19 +407,8 @@ namespace FileBaseContext.Tests.Serializers
                     ["String1"]
                 ]);
 
-            Assert.AreEqual("""
-                [
-                  {
-                    "Value": null
-                  },
-                  {
-                    "Value": ""
-                  },
-                  {
-                    "Value": "String1"
-                  }
-                ]
-                """,
+            AssertStrings(
+                "[\r\n  {\r\n    \"Value\": null\r\n  },\r\n  {\r\n    \"Value\": \"\"\r\n  },\r\n  {\r\n    \"Value\": \"String1\"\r\n  }\r\n]",
                 json);
         }
 
@@ -440,18 +425,8 @@ namespace FileBaseContext.Tests.Serializers
                     [10, 11],
                 ]);
 
-            Assert.AreEqual("""
-                [
-                  {
-                    "Value": 0,
-                    "Nullable": null
-                  },
-                  {
-                    "Value": 10,
-                    "Nullable": 11
-                  }
-                ]
-                """,
+            AssertStrings(
+                "[\r\n  {\r\n    \"Value\": 0,\r\n    \"Nullable\": null\r\n  },\r\n  {\r\n    \"Value\": 10,\r\n    \"Nullable\": 11\r\n  }\r\n]",
                 json);
         }
 
@@ -468,18 +443,8 @@ namespace FileBaseContext.Tests.Serializers
                     [10L, 11L],
                 ]);
 
-            Assert.AreEqual("""
-                [
-                  {
-                    "Value": 0,
-                    "Nullable": null
-                  },
-                  {
-                    "Value": 10,
-                    "Nullable": 11
-                  }
-                ]
-                """,
+            AssertStrings(
+                "[\r\n  {\r\n    \"Value\": 0,\r\n    \"Nullable\": null\r\n  },\r\n  {\r\n    \"Value\": 10,\r\n    \"Nullable\": 11\r\n  }\r\n]",
                 json);
         }
 
@@ -497,18 +462,8 @@ namespace FileBaseContext.Tests.Serializers
                     [value, value],
                 ]);
 
-            Assert.AreEqual("""
-                [
-                  {
-                    "Value": "0001-01-01T00:00:00",
-                    "Nullable": null
-                  },
-                  {
-                    "Value": "2000-01-02T03:04:05.678",
-                    "Nullable": "2000-01-02T03:04:05.678"
-                  }
-                ]
-                """,
+            AssertStrings(
+                "[\r\n  {\r\n    \"Value\": \"0001-01-01T00:00:00\",\r\n    \"Nullable\": null\r\n  },\r\n  {\r\n    \"Value\": \"2000-01-02T03:04:05.678\",\r\n    \"Nullable\": \"2000-01-02T03:04:05.678\"\r\n  }\r\n]",
                 json);
         }
 
@@ -529,22 +484,8 @@ namespace FileBaseContext.Tests.Serializers
                     [valueLocal, valueLocal],
                 ]);
 
-            Assert.AreEqual("""
-                [
-                  {
-                    "Value": "0001-01-01T00:00:00+00:00",
-                    "Nullable": null
-                  },
-                  {
-                    "Value": "2000-01-02T03:04:05.678+00:00",
-                    "Nullable": "2000-01-02T03:04:05.678+00:00"
-                  },
-                  {
-                    "Value": "2000-01-02T03:04:05.678-08:00",
-                    "Nullable": "2000-01-02T03:04:05.678-08:00"
-                  }
-                ]
-                """,
+            AssertStrings(
+                "[\r\n  {\r\n    \"Value\": \"0001-01-01T00:00:00+00:00\",\r\n    \"Nullable\": null\r\n  },\r\n  {\r\n    \"Value\": \"2000-01-02T03:04:05.678+00:00\",\r\n    \"Nullable\": \"2000-01-02T03:04:05.678+00:00\"\r\n  },\r\n  {\r\n    \"Value\": \"2000-01-02T03:04:05.678-08:00\",\r\n    \"Nullable\": \"2000-01-02T03:04:05.678-08:00\"\r\n  }\r\n]",
                 json);
         }
 
@@ -563,18 +504,8 @@ namespace FileBaseContext.Tests.Serializers
                     [value, value],
                 ]);
 
-            Assert.AreEqual("""
-                [
-                  {
-                    "Value": "00:00:00",
-                    "Nullable": null
-                  },
-                  {
-                    "Value": "1.02:03:04.5670000",
-                    "Nullable": "1.02:03:04.5670000"
-                  }
-                ]
-                """,
+            AssertStrings(
+                "[\r\n  {\r\n    \"Value\": \"00:00:00\",\r\n    \"Nullable\": null\r\n  },\r\n  {\r\n    \"Value\": \"1.02:03:04.5670000\",\r\n    \"Nullable\": \"1.02:03:04.5670000\"\r\n  }\r\n]",
                 json);
         }
 
@@ -591,20 +522,21 @@ namespace FileBaseContext.Tests.Serializers
                     [(byte[])[0, 1, 2, 3]],
                 ]);
 
-            Assert.AreEqual("""
-                [
-                  {
-                    "Value": null
-                  },
-                  {
-                    "Value": ""
-                  },
-                  {
-                    "Value": "AAECAw=="
-                  }
-                ]
-                """,
+            AssertStrings(
+                "[\r\n  {\r\n    \"Value\": null\r\n  },\r\n  {\r\n    \"Value\": \"\"\r\n  },\r\n  {\r\n    \"Value\": \"AAECAw==\"\r\n  }\r\n]",
                 json);
+        }
+
+        private void AssertStrings(string str, string json)
+        {
+            if (str.Length != json.Length)
+                Assert.Fail($"Strings have different length: {str.Length} != {json.Length}");
+
+            for (int index = 0; index < str.Length; index++)
+            {
+                if (str[index] != json[index])
+                    Assert.Fail($"'{str[index]}' != '{json[index]}' at {index}.");
+            }
         }
 
         private static string Serialize(

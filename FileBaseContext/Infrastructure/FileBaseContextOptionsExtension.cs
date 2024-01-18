@@ -1,4 +1,5 @@
 ﻿using kDg.FileBaseContext.Extensions;
+using kDg.FileBaseContext.Serializers;
 using kDg.FileBaseContext.Storage;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,6 +35,7 @@ public class FileBaseContextOptionsExtension : IDbContextOptionsExtension
         services.AddEntityFrameworkFileBaseContextDatabase();
 
         services.AddFileSystem();
+        services.AddJsonRowDataSerializer();
         _applyServices?.Invoke(services);
     }
 

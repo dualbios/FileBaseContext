@@ -102,5 +102,10 @@ namespace FileBaseContext.Tests
         }
 
         #endregion
+
+        protected string ReadFileContext(string filePath)
+        {
+            return FileSystem.File.ReadAllText(filePath);
+        }
     }
 }

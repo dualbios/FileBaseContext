@@ -70,7 +70,7 @@ namespace FileBaseContext.Tests
                 db.Add(new EntityHasByteArray()
                 {
                     Id = 1,
-                    ByteArray = new byte [] {},
+                    ByteArray = new byte[] { },
                 });
                 db.SaveChanges();
             }
@@ -91,10 +91,13 @@ namespace FileBaseContext.Tests
                 db.Add(new EntityHasByteArray()
                 {
                     Id = 1,
-                    ByteArray = new byte[] {0x00, 0x01, 0x02, 0x03},
+                    ByteArray = new byte[] { 0x00, 0x01, 0x02, 0x03 },
                 });
                 db.SaveChanges();
             }
+
+            string content = ReadFileContext(GetDatabaseFullFileName(nameof(EntityHasByteArray) + ".json"));
+
 
             using (var db = CreateDbContext())
             {
@@ -116,6 +119,7 @@ namespace FileBaseContext.Tests
                 ]
                 """);
 
+            string content = ReadFileContext(GetDatabaseFullFileName("EntityHasByteArray.json"));
             using (var db = CreateDbContext())
             {
                 var entity = db.EntitiesHaveByteArrays.Single();
@@ -136,6 +140,7 @@ namespace FileBaseContext.Tests
                 ]
                 """);
 
+            string content = ReadFileContext(GetDatabaseFullFileName("EntityHasByteArray.json"));
             using (var db = CreateDbContext())
             {
                 var entity = db.EntitiesHaveByteArrays.Single();
@@ -151,23 +156,20 @@ namespace FileBaseContext.Tests
                 DbContextOptions<TestDbContext> options)
             : DbContext(options)
         {
-
             public DbSet<EntityHasByteArray> EntitiesHaveByteArrays { get; set; } = null!;
             public DbSet<EntityHasNullables> EntitiesHaveNullables { get; set; } = null!;
         }
 
         public class EntityHasByteArray
         {
-            [Key]
-            public int Id { get; set; }
+            [Key] public int Id { get; set; }
 
             public byte[]? ByteArray { get; set; }
         }
 
         public class EntityHasNullables
         {
-            [Key]
-            public int Id { get; set; }
+            [Key] public int Id { get; set; }
 
             public string? StringValue { get; set; }
 

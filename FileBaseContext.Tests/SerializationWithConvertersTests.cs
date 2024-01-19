@@ -124,6 +124,8 @@ namespace FileBaseContext.Tests
                 db.SaveChanges();
             }
 
+            string content = ReadFileContext(GetDatabaseFullFileName(nameof(EntityUsesBytesValueConverter)) + ".json");
+
             using (var db = CreateDbContext())
             {
                 var entity = db.EntitiesUseBytesValueConverters.Single();

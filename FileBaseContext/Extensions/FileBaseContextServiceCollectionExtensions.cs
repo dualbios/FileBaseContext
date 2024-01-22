@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions.Infrastructure;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.ValueGeneration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace kDg.FileBaseContext.Extensions;
@@ -17,6 +18,7 @@ public static class FileBaseContextServiceCollectionExtensions
         var builder = new EntityFrameworkServicesBuilder(serviceCollection)
             .TryAdd<LoggingDefinitions, FileBaseContextLoggingDefinitions>()
             .TryAdd<IDatabaseProvider, DatabaseProvider<FileBaseContextOptionsExtension>>()
+            .TryAdd<IValueGeneratorSelector, FileContextBaseValueGeneratorSelector>()
             .TryAdd<IDatabase>(p => p.GetService<IFileBaseContextDatabase>())
             .TryAdd<IDbContextTransactionManager, FileBaseContextTransactionManager>()
             .TryAdd<IDatabaseCreator, FileBaseContextDatabaseCreator>()

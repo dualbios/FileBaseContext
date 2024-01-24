@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace kDg.FileBaseContext.Serializers;
 
-public class CsvRowDataSerializerFactory : IRowDataSerializerFactory
+internal class CsvRowDataSerializerFactory : IRowDataSerializerFactory
 {
     public IRowDataSerializer Create<TKey>(IEntityType entityType, IPrincipalKeyValueFactory<TKey> keyValueFactory)
     {

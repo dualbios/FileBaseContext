@@ -27,7 +27,7 @@ public class FileBaseContextTable<TKey> : IFileBaseContextTable
     public FileBaseContextTable(IEntityType entityType, IServiceProvider serviceProvider, IFileBaseContextScopedOptions options)
     {
         _entityType = entityType;
-        _fileManager = serviceProvider.GetService<IFileBaseContextFileManager>();
+        _fileManager = serviceProvider.GetRequiredService<IFileBaseContextFileManager>();
         _options = options;
         _primaryKey = entityType.FindPrimaryKey();
         _keyValueFactory = _primaryKey.GetPrincipalKeyValueFactory<TKey>();

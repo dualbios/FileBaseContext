@@ -73,6 +73,11 @@ namespace FileBaseContext.Tests
 
         #region File Helpers
 
+        protected string ReadFileContext(string filePath)
+        {
+            return FileSystem.File.ReadAllText(filePath);
+        }
+
         protected void AddDatabaseJsonFile(
             string fileName,
             [StringSyntax(StringSyntaxAttribute.Json)] string content)
@@ -80,7 +85,7 @@ namespace FileBaseContext.Tests
             FileSystem.AddFile(GetDatabaseFullFileName(fileName), content);
         }
 
-        protected string? ReadDatabaseFileText(string fileName)
+        protected string ReadDatabaseFileText(string fileName)
         {
             return FileSystem.File.ReadAllText(GetDatabaseFullFileName(fileName));
         }

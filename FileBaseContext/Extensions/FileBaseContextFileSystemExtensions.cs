@@ -9,6 +9,7 @@ public static class FileBaseContextFileSystemExtensions
 {
     public static IServiceCollection AddFileSystem(this IServiceCollection services)
     {
+        services.RemoveAll<IFileSystem>();
         services.AddSingleton<IFileSystem, FileSystem>();
         return services;
     }

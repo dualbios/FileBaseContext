@@ -27,11 +27,11 @@ public class FileBaseContextTable<TKey> : IFileBaseContextTable
     public FileBaseContextTable(IEntityType entityType, IServiceProvider serviceProvider, IFileBaseContextScopedOptions options)
     {
         _entityType = entityType;
-        _fileManager = serviceProvider.GetService<IFileBaseContextFileManager>();
+        _fileManager = serviceProvider.GetRequiredService<IFileBaseContextFileManager>();
         _options = options;
         _primaryKey = entityType.FindPrimaryKey();
         _keyValueFactory = _primaryKey.GetPrincipalKeyValueFactory<TKey>();
-        _serializer = new JsonRowDataSerializer(entityType, _keyValueFactory);
+        _serializer = serviceProvider.GetRequiredService<IRowDataSerializerFactory>().Create(entityType, _keyValueFactory);
 
         _fileManager.Init(_options);
 

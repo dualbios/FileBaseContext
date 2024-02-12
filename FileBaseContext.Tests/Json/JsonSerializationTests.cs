@@ -1,11 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
-namespace FileBaseContext.Tests
+namespace FileBaseContext.Tests.Json
 {
     [TestClass]
-    public class SerializationTests
-        : DbContextTestClassBase<SerializationTests.TestDbContext>
+    public class JsonSerializationTests
+        : DbContextTestClassBase<JsonSerializationTests.TestDbContext>
     {
         [TestMethod]
         public void CanDifferentiateNullFromDefault_Primitives()

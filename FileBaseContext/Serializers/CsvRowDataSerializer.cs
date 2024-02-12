@@ -44,7 +44,13 @@ internal class CsvRowDataSerializer : IRowDataSerializer
 
         using StreamReader reader = new(stream);
         //read column names
-        string[] columnNames = reader.ReadLine().Split(',');
+        string header = reader.ReadLine();
+        if (header == null)
+        {
+            return;
+        }
+
+        string[] columnNames = header.Split(',');
         if (columnNames.Length != _columnNames.Length)
         {
             throw new InvalidOperationException("Invalid CSV file");

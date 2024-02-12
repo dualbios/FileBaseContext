@@ -3,10 +3,10 @@ using FileBaseContext.Tests.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using static FileBaseContext.Tests.Data.Entities.User;
 
-namespace FileBaseContext.Tests;
+namespace FileBaseContext.Tests.Json;
 
 [TestClass]
-public class SimplePositiveTests
+public class JsonSimplePositiveTests
     : DbContextTestClassBase<DbTestContext>
 {
     [TestMethod]

@@ -80,7 +80,7 @@ namespace FileBaseContext.Tests
             FileSystem.AddFile(GetDatabaseFullFileName(fileName), content);
         }
 
-        protected string? ReadDatabaseFileText(string fileName)
+        protected string ReadDatabaseFileText(string fileName)
         {
             return FileSystem.File.ReadAllText(GetDatabaseFullFileName(fileName));
         }

@@ -1,13 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace FileBaseContext.Tests
+namespace FileBaseContext.Tests.Json
 {
     [TestClass]
-    public class SerializationWithConvertersTests
-        : DbContextTestClassBase<SerializationWithConvertersTests.TestDbContext>
+    public class JsonSerializationWithConvertersTests
+        : DbContextTestClassBase<JsonSerializationWithConvertersTests.TestDbContext>
     {
         [TestMethod]
         public void CanRoundTripValueConverterToString_Null()

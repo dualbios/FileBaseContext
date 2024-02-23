@@ -69,6 +69,13 @@ protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 ```
 Please find example in the SimplePositiveTests class in the test project
 
+## New in 4.0.0
+
+Since the 4.0.0 version the FileBaseContext supports persisting data in the CSV files.
+The CSV files are stored in the directory with the database name. 
+The CSV files are named by the entity name. 
+The first row in the CSV file is the header with the column names.
+
 ## ! Braking changes in 3.0.0 !
 
 In 3.0.0 version the provider was changed to support numeric values without quotation marks.

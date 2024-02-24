@@ -201,10 +201,11 @@ internal class CsvRowDataSerializer : IRowDataSerializer
                     value = $"\"{value.Replace("\"", "\"\"")}\""; // escape quotes
                 }
 
-                if (value != null && value.Contains(',') && !value.StartsWith('"') && !value.EndsWith('"'))
+                if (value != null && ((value.Contains(',') && !value.StartsWith('"') && !value.EndsWith('"')) || (value.Contains('\n') )))
                 {
                     value = $"\"{value}\"";
                 }
+                
 
                 writer.Write(value);
             }

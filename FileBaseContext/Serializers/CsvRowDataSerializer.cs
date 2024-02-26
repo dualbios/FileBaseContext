@@ -59,7 +59,7 @@ internal class CsvRowDataSerializer : IRowDataSerializer
         //read data
         while (!reader.EndOfStream)
         {
-            string[] columnValues = ReadColumnValues(reader.ReadLine());
+            string[] columnValues = ReadColumnValues(reader, _properties.Length);
             object[] values = new object[columnValues.Length];
             for (int i = 0; i < columnValues.Length; i++)
             {
@@ -68,11 +68,11 @@ internal class CsvRowDataSerializer : IRowDataSerializer
                 Type clrType = _properties[i].GetValueConverter()?.ProviderClrType ?? _properties[i].ClrType;
 
 
-                if (clrType == typeof(string)) 
+                if (clrType == typeof(string))
                 {
                     if (string.IsNullOrEmpty(columnValue))
                     {
-                        values[i]= null;
+                        values[i] = null;
                         continue;
                     }
                 }
@@ -110,18 +110,17 @@ internal class CsvRowDataSerializer : IRowDataSerializer
         }
     }
 
-    private static string[] ReadColumnValues(string input)
+    private static string[] ReadColumnValues(StreamReader inputStream, int propertiesCount)
     {
-        int index = 0;
-        int length = input.Length;
+        int propertyIndex = 0;
         bool inQuotes = false;
         bool isEscaping = false;
         var columnValueBuilder = new StringBuilder();
         var columnValues = new List<string>();
 
-        while (index < length)
+        while (propertyIndex < propertiesCount && !inputStream.EndOfStream)
         {
-            char ch = input[index];
+            char ch = (char)inputStream.Read();
 
             if (isEscaping)
             {
@@ -141,13 +140,20 @@ internal class CsvRowDataSerializer : IRowDataSerializer
             {
                 columnValues.Add(columnValueBuilder.ToString());
                 columnValueBuilder.Clear();
+                propertyIndex++;
+            }
+            else if (ch == '\n' && !inQuotes)
+            {
+                if (columnValueBuilder[^1] == '\r')
+                    columnValueBuilder.Remove(columnValueBuilder.Length - 1, 1);
+                columnValues.Add(columnValueBuilder.ToString());
+
+                return columnValues.ToArray();
             }
             else
             {
                 columnValueBuilder.Append(ch);
             }
-
-            index++;
         }
 
         columnValues.Add(columnValueBuilder.ToString());
@@ -201,7 +207,7 @@ internal class CsvRowDataSerializer : IRowDataSerializer
                     value = $"\"{value.Replace("\"", "\"\"")}\""; // escape quotes
                 }
 
-                if (value != null && value.Contains(',') && !value.StartsWith('"') && !value.EndsWith('"'))
+                if (value != null && (value.Contains(',') || value.Contains('\n')) && !value.StartsWith('"') && !value.EndsWith('"'))
                 {
                     value = $"\"{value}\"";
                 }

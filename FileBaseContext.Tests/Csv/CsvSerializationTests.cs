@@ -18,14 +18,14 @@ public class CsvSerializationTests
             {
                 Id = 1,
                 StringValue = null,
-                IntValue = null,
+                IntValue = null
             });
 
             db.Add(new EntityHasNullables()
             {
                 Id = 2,
                 StringValue = string.Empty,
-                IntValue = 0,
+                IntValue = 0
             });
 
             db.SaveChanges();
@@ -54,7 +54,7 @@ public class CsvSerializationTests
             {
                 Id = 1,
                 StringValue = "This is a \"test\" of the emergency broadcast system.",
-                IntValue = 0,
+                IntValue = 0
             });
             db.SaveChanges();
         }
@@ -68,6 +68,116 @@ public class CsvSerializationTests
     }
 
     [TestMethod]
+    public void CanSaveMultilineTextWithWindowsNewLine()
+    {
+        using (var db = CreateDbContext())
+        {
+            db.Add(new EntityHasNullables()
+            {
+                Id = 1,
+                StringValue = "This is a test of the \r\nmultiline text.",
+                IntValue = 0
+            });
+            db.SaveChanges();
+        }
+
+        string content = ReadDatabaseFileText(nameof(EntityHasNullables) + ".csv");
+        using (var db = CreateDbContext())
+        {
+            var entity = db.EntitiesHaveNullables.Single();
+            Assert.AreEqual("This is a test of the \r\nmultiline text.", entity.StringValue);
+        }
+    }
+
+    [TestMethod]
+    public void CanSaveMultilineTextStringColumnIsInMiddle()
+    {
+        using (var db = CreateDbContext())
+        {
+            db.Add(new EntityHasNullablesStringColumnInMiddle()
+            {
+                Id = 1,
+                FStringValue = "This is a test of the \r\nmultiline text.",
+                IntValue = 0
+            });
+            db.SaveChanges();
+        }
+
+        string content = ReadDatabaseFileText(nameof(EntityHasNullablesStringColumnInMiddle) + ".csv");
+        using (var db = CreateDbContext())
+        {
+            var entity = db.EntitiesHaveNullablesAndStringColumnInMiddle.Single();
+            Assert.AreEqual("This is a test of the \r\nmultiline text.", entity.FStringValue);
+        }
+    }
+
+    [TestMethod]
+    public void CanSaveEscapedMultilineTextStringColumnIsInMiddle()
+    {
+        using (var db = CreateDbContext())
+        {
+            db.Add(new EntityHasNullablesStringColumnInMiddle()
+            {
+                Id = 1,
+                FStringValue = "This is a \"test\" of the \r\nmultiline text.",
+                IntValue = 0
+            });
+            db.SaveChanges();
+        }
+
+        string content = ReadDatabaseFileText(nameof(EntityHasNullablesStringColumnInMiddle) + ".csv");
+        using (var db = CreateDbContext())
+        {
+            var entity = db.EntitiesHaveNullablesAndStringColumnInMiddle.Single();
+            Assert.AreEqual("This is a \"test\" of the \r\nmultiline text.", entity.FStringValue);
+        }
+    }
+
+    [TestMethod]
+    public void CanSaveMultilineTextWithLinuxNewLine()
+    {
+        using (var db = CreateDbContext())
+        {
+            db.Add(new EntityHasNullables()
+            {
+                Id = 1,
+                StringValue = "This is a test of the \nmultiline text.",
+                IntValue = 0
+            });
+            db.SaveChanges();
+        }
+
+        string content = ReadDatabaseFileText(nameof(EntityHasNullables) + ".csv");
+        using (var db = CreateDbContext())
+        {
+            var entity = db.EntitiesHaveNullables.Single();
+            Assert.AreEqual("This is a test of the \nmultiline text.", entity.StringValue);
+        }
+    }
+
+    [TestMethod]
+    public void CanSaveEscapedMultilineText()
+    {
+        using (var db = CreateDbContext())
+        {
+            db.Add(new EntityHasNullables()
+            {
+                Id = 1,
+                StringValue = "This is a \"test\" of the emergency broadcast system.\nNew line.",
+                IntValue = 0
+            });
+            db.SaveChanges();
+        }
+
+        string content = ReadDatabaseFileText(nameof(EntityHasNullables) + ".csv");
+        using (var db = CreateDbContext())
+        {
+            var entity = db.EntitiesHaveNullables.Single();
+            Assert.AreEqual("This is a \"test\" of the emergency broadcast system.\nNew line.", entity.StringValue);
+        }
+    }
+
+    [TestMethod]
     public void CanSaveNullByteArrays()
     {
         using (var db = CreateDbContext())
@@ -75,7 +185,7 @@ public class CsvSerializationTests
             db.Add(new EntityHasByteArray()
             {
                 Id = 1,
-                ByteArray = null,
+                ByteArray = null
             });
             db.SaveChanges();
         }
@@ -96,7 +206,7 @@ public class CsvSerializationTests
             db.Add(new EntityHasByteArray()
             {
                 Id = 1,
-                ByteArray = new byte[] { },
+                ByteArray = new byte[] { }
             });
             db.SaveChanges();
         }
@@ -118,10 +228,11 @@ public class CsvSerializationTests
             db.Add(new EntityHasByteArray()
             {
                 Id = 1,
-                ByteArray = new byte[] { 0x00, 0x01, 0x02, 0x03 },
+                ByteArray = new byte[] { 0x00, 0x01, 0x02, 0x03 }
             });
             db.SaveChanges();
         }
+
         string content = ReadDatabaseFileText(nameof(EntityHasByteArray) + ".csv");
 
         using (var db = CreateDbContext())
@@ -168,25 +279,31 @@ public class CsvSerializationTests
     {
         public DbSet<EntityHasByteArray> EntitiesHaveByteArrays { get; set; } = null!;
         public DbSet<EntityHasNullables> EntitiesHaveNullables { get; set; } = null!;
+        public DbSet<EntityHasNullablesStringColumnInMiddle> EntitiesHaveNullablesAndStringColumnInMiddle { get; set; } = null!;
     }
 
     public class EntityHasByteArray
     {
-        [Key]
-        public int Id { get; set; }
+        [Key] public int Id { get; set; }
 
         public byte[]? ByteArray { get; set; }
     }
 
     public class EntityHasNullables
     {
-        [Key]
-        public int Id { get; set; }
+        [Key] public int Id { get; set; }
 
         public string? StringValue { get; set; }
 
         public int? IntValue { get; set; }
     }
 
+    public class EntityHasNullablesStringColumnInMiddle
+    {
+        [Key] public int Id { get; set; }
 
+        public string? FStringValue { get; set; }
+
+        public int? IntValue { get; set; }
+    }
 }

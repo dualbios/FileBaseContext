@@ -50,5 +50,7 @@ namespace FileBaseContext.Tests.Data.Entities
         {
             Admin, User, Manager
         }
+
+        public string Comment { get; set; }
     }
 }

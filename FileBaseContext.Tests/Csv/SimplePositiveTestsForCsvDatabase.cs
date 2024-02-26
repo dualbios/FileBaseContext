@@ -13,11 +13,9 @@ public class SimplePositiveTestsForCsvDatabase
     public void ReadFromFile()
     {
         //arrange
-        AddDatabaseJsonFile("User.csv", """
-            Id, CreatedOn, Name, Test, Test2, Type, UpdatedOn, Username
-            1,01/01/2000 00:00:00,john_doe,,e4030155-ef22-4954-9b7c-c9ee398a8086,User,01/01/0001 00:00:00,john_doe_name
-            2,01/01/2000 00:00:00,jane_smith,42,e4030155-ef22-4954-9b7c-c9ee398a8082,Manager,01/01/0001 00:00:00,jane_smith_name
-            """);
+        AddDatabaseJsonFile("User.csv", @"Id, Comment, CreatedOn, Name, Test, Test2, Type, UpdatedOn, Username
+1,"""",01/01/2000 00:00:00,john_doe,,e4030155-ef22-4954-9b7c-c9ee398a8086,User,01/01/0001 00:00:00,john_doe_name
+2,""NoComments"",01/01/2000 00:00:00,jane_smith,42,e4030155-ef22-4954-9b7c-c9ee398a8082,Manager,01/01/0001 00:00:00,jane_smith_name");
 
         using CsvDbTestContext context = CreateDbContext();
 
@@ -64,7 +62,8 @@ public class SimplePositiveTestsForCsvDatabase
             Test2 = Guid.Parse("e4030155-ef22-4954-9b7c-c9ee398a8086"),
             Type = UserType.User,
             UpdatedOn = DateTime.Parse("01/01/0001 00:00:00"),
-            Username = "john, \"doe\"; name"
+            Username = "john, \"doe\"; name",
+            Comment = "No comments"
         };
         context.Users.Add(user);
 
@@ -78,8 +77,8 @@ public class SimplePositiveTestsForCsvDatabase
         Assert.IsTrue(FileSystem.AllFiles.Any(x => x.Contains("User.csv")));
 
         string fileContent = FileSystem.File.ReadAllText(FileSystem.AllFiles.First(x => x.Contains("User.csv")));
-        TestHelpers.AssertString(@"Id,CreatedOn,Name,Test,Test2,Type,UpdatedOn,Username" + Environment.NewLine +
-                                 @"1,01/01/2000 11:12:13,john_doe,,e4030155-ef22-4954-9b7c-c9ee398a8086,User,,""john, """"doe""""; name""" + Environment.NewLine,
+        TestHelpers.AssertString(@"Id,Comment,CreatedOn,Name,Test,Test2,Type,UpdatedOn,Username" + Environment.NewLine +
+                                 @"1,No comments,01/01/2000 11:12:13,john_doe,,e4030155-ef22-4954-9b7c-c9ee398a8086,User,,""john, """"doe""""; name""" + Environment.NewLine,
                                  fileContent);
     }
 

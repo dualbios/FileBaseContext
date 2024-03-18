@@ -49,9 +49,9 @@ public class JsonRowDataSerializer : IRowDataSerializer
         }
 
         var keyValueFactory = (IPrincipalKeyValueFactory<TKey>)_keyValueFactory;
-        var keyValues = new object[_keyColumns.Length];
         foreach (var rowData in rowsData)
         {
+            var keyValues = new object[_keyColumns.Length];
             var columnValues = rowData.ColumnValues;
 
             for (int i = 0; i < keyValues.Length; i++)

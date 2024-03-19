@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Diagnostics;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 
 namespace kDg.FileBaseContext.Serializers;
 
@@ -82,6 +84,7 @@ public class JsonRowDataSerializer : IRowDataSerializer
         return new JsonSerializerOptions()
         {
             AllowTrailingCommas = true,
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
             WriteIndented = true,
             Converters =
             {

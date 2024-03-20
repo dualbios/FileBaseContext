@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Diagnostics;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 
 namespace kDg.FileBaseContext.Serializers;
 
@@ -49,9 +51,9 @@ public class JsonRowDataSerializer : IRowDataSerializer
         }
 
         var keyValueFactory = (IPrincipalKeyValueFactory<TKey>)_keyValueFactory;
-        var keyValues = new object[_keyColumns.Length];
         foreach (var rowData in rowsData)
         {
+            var keyValues = new object[_keyColumns.Length];
             var columnValues = rowData.ColumnValues;
 
             for (int i = 0; i < keyValues.Length; i++)
@@ -82,6 +84,7 @@ public class JsonRowDataSerializer : IRowDataSerializer
         return new JsonSerializerOptions()
         {
             AllowTrailingCommas = true,
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
             WriteIndented = true,
             Converters =
             {

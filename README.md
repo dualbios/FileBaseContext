@@ -29,7 +29,7 @@ or configure the database context itself
 ```cs
 protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 {
-	optionsBuilder.UseFileStoreDatabase("my_local_db");
+	optionsBuilder.UseFileBaseContextDatabase("my_local_db");
 	base.OnConfiguring(optionsBuilder);
 }
 ```

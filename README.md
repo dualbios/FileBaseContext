@@ -1,20 +1,26 @@
 # FileBaseContext
 
-**FileBaseContext** is a provider of **Entity Framework Core 8** to store database information in files. 
+**FileBaseContext** is an [Entity Framework Core](https://learn.microsoft.com/en-us/ef/core/) provider to store database records in files.
 
-It was built for development purposes. All information is stored in files that can be added, updated, or deleted manually.
+It was built for rapid development purposes. All information that is stored in files that can be added, updated or deleted manually.
 
 ## Benefits
 
 - you don't need a database
 - rapid modeling
 - version control supported
-- supports all serializable .NET types-
+- supports all serializable .NET types
 - unit tests
 
 ## Download
 
 https://www.nuget.org/packages/FileBaseContext/
+
+| Provider Version | EF Core Version |
+| ---------------- | --------------- |
+| 1.0.x  | 7  |
+| 2.0.x thru 4.0.x  | 8  |
+| 5.0.x | 9  |
 
 ## Configure Database Context
 
@@ -29,8 +35,8 @@ or configure the database context itself
 ```cs
 protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 {
-	optionsBuilder.UseFileBaseContextDatabase("my_local_db");
-	base.OnConfiguring(optionsBuilder);
+    optionsBuilder.UseFileBaseContextDatabase("my_local_db");
+    base.OnConfiguring(optionsBuilder);
 }
 ```
 
@@ -48,9 +54,9 @@ optionsBuilder.UseFileBaseContextDatabase(location: "C:\Temp\userDb");
 
 ## Unit testing
 
-Since 2.1.0 the FileBaseContext injects access to the file system through System.IO.Abstractions library. It allows the use of the provider in unit tests.
+Since version 2.1.0 FileBaseContext injects access to the file system through `System.IO.Abstractions` library. It allows the use of the provider in unit tests.
 
-If you need to use the provider in unit tests, you can change IFileSystem to MockFileSystem in OnConfiguring method in datacontext class.
+If you need to use the provider in unit tests, you can change `IFileSystem` to `MockFileSystem` in OnConfiguring method in datacontext class.
 
 ```cs
 private readonly MockFileSystem _fileSystem;
@@ -67,20 +73,13 @@ protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     });
 }
 ```
-Please find example in the SimplePositiveTests class in the test project
+Please find an example in the SimplePositiveTests class in the test project
 
-## New in 4.0.0
+## Changes in 3.0.0
 
-Since the 4.0.0 version the FileBaseContext supports persisting data in the CSV files.
-The CSV files are stored in the directory with the database name. 
-The CSV files are named by the entity name. 
-The first row in the CSV file is the header with the column names.
+In version 3.0.0 the provider was changed to support numeric values without quotation marks.
 
-## ! Braking changes in 3.0.0 !
-
-In 3.0.0 version the provider was changed to support numeric values without quotation marks.
-
-```
+```json
 {
     "IntProp": 42,
     "LongProperty": 420,
@@ -88,8 +87,15 @@ In 3.0.0 version the provider was changed to support numeric values without quot
 }
 ```
 
-The led to breaking changes in the provider. If you have used the provider before, you need to manualy update the database files. 
-The changes also affect on DateTime and DateTimeOffset values. The values are stored as string in the database.
-First run of the application could be slow becasuse a lot of System.Text.Json.JsonException will be provided.
-Performance be fixed after provider saves a database to files. While that the data will be stored in new formats.
-If you still have performance issues you need to manualy update the database files.
+This led to **breaking changes** in the provider. If you have used the provider before you'll need to manually update the database files. 
+The changes also affect `DateTime` and `DateTimeOffset` values as those values are stored as a string in the database file.
+The first run of the application could be slow because multiple `System.Text.Json.JsonException` will be generated.
+Performance will improve after the provider saves the database to files as the data will then be stored in the new format.
+If you still have performance issues you will need to manually update the database files.
+
+## New in 4.0.0
+
+Since version 4.0.0 the provider supports persisting data in CSV files.
+The CSV files are stored in the directory using the database name. 
+The CSV files are named using the entity name. 
+The first row in the CSV file is the header row with the column names.

@@ -75,6 +75,17 @@ protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 ```
 Please find an example in the SimplePositiveTests class in the test project
 
+## Update for 5.0.0
+
+Upgraded to .NET 9 and EF Core 9
+
+## New in 4.0.0
+
+Since version 4.0.0 the provider supports persisting data in CSV files.
+The CSV files are stored in the directory using the database name. 
+The CSV files are named using the entity name. 
+The first row in the CSV file is the header row with the column names.
+
 ## Changes in 3.0.0
 
 In version 3.0.0 the provider was changed to support numeric values without quotation marks.
@@ -92,10 +103,3 @@ The changes also affect `DateTime` and `DateTimeOffset` values as those values a
 The first run of the application could be slow because multiple `System.Text.Json.JsonException` will be generated.
 Performance will improve after the provider saves the database to files as the data will then be stored in the new format.
 If you still have performance issues you will need to manually update the database files.
-
-## New in 4.0.0
-
-Since version 4.0.0 the provider supports persisting data in CSV files.
-The CSV files are stored in the directory using the database name. 
-The CSV files are named using the entity name. 
-The first row in the CSV file is the header row with the column names.

@@ -4,7 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using System.Diagnostics;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace kDg.FileBaseContext.Serializers;
 
@@ -15,12 +17,13 @@ public class JsonRowDataSerializer : IRowDataSerializer
     private readonly int[] _keyColumns;
     private readonly JsonSerializerOptions _jsonOptions;
 
-    public JsonRowDataSerializer(IEntityType entityType, object keyValueFactory)
+    public JsonRowDataSerializer(IEntityType entityType, object keyValueFactory, IServiceProvider serviceProvider)
     {
         _entityType = entityType;
         _keyValueFactory = keyValueFactory;
         _keyColumns = CreateKeyColumnsLookup(entityType);
-        _jsonOptions = CreateJsonOptions(entityType);
+        JsonSerializerOptions options = serviceProvider.GetService<JsonSerializerOptions>();
+        _jsonOptions = CreateJsonOptions(entityType, options);
 
         static int[] CreateKeyColumnsLookup(IEntityType entityType)
         {
@@ -74,9 +77,40 @@ public class JsonRowDataSerializer : IRowDataSerializer
         JsonSerializer.Serialize(stream, rowsData, _jsonOptions);
     }
 
-    internal static JsonSerializerOptions CreateJsonOptions(IEntityType entityType)
+    internal static JsonSerializerOptions CreateJsonOptions(IEntityType entityType, JsonSerializerOptions jsonOptions) 
     {
-        return CreateJsonOptions(JsonColumnInfo.FromEntityType(entityType));
+        JsonSerializerOptions serializerOptions = CreateJsonOptions(JsonColumnInfo.FromEntityType(entityType));
+        if(jsonOptions == null) {
+            return serializerOptions;
+        }
+        
+        // Merge the provided JsonSerializerOptions with the default options
+        IList<JsonConverter> converters = serializerOptions.Converters.ToList();
+        serializerOptions.Converters.Clear();
+
+        foreach (JsonConverter converter in converters.Concat(jsonOptions.Converters).Distinct()) {
+            serializerOptions.Converters.Add(converter);
+        }
+
+        serializerOptions.AllowTrailingCommas = jsonOptions.AllowTrailingCommas;
+        serializerOptions.DefaultBufferSize = jsonOptions.DefaultBufferSize;
+        serializerOptions.DefaultIgnoreCondition = jsonOptions.DefaultIgnoreCondition;
+        serializerOptions.DictionaryKeyPolicy = jsonOptions.DictionaryKeyPolicy;
+        serializerOptions.Encoder = jsonOptions.Encoder;
+        serializerOptions.IgnoreReadOnlyFields = jsonOptions.IgnoreReadOnlyFields;
+        serializerOptions.IgnoreReadOnlyProperties = jsonOptions.IgnoreReadOnlyProperties;
+        serializerOptions.IncludeFields = jsonOptions.IncludeFields;
+        serializerOptions.MaxDepth = jsonOptions.MaxDepth;
+        serializerOptions.NumberHandling = jsonOptions.NumberHandling;
+        serializerOptions.PropertyNameCaseInsensitive = jsonOptions.PropertyNameCaseInsensitive;
+        serializerOptions.PropertyNamingPolicy = jsonOptions.PropertyNamingPolicy;
+        serializerOptions.ReadCommentHandling = jsonOptions.ReadCommentHandling;
+        serializerOptions.ReferenceHandler = jsonOptions.ReferenceHandler;
+        serializerOptions.TypeInfoResolver = jsonOptions.TypeInfoResolver;
+        serializerOptions.UnknownTypeHandling = jsonOptions.UnknownTypeHandling;
+        serializerOptions.WriteIndented = jsonOptions.WriteIndented;
+
+        return serializerOptions;
     }
 
     internal static JsonSerializerOptions CreateJsonOptions(IEnumerable<JsonColumnInfo> columns)

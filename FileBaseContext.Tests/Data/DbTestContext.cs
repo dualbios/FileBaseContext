@@ -1,7 +1,13 @@
 ﻿using System.IO.Abstractions.TestingHelpers;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Unicode;
 using FileBaseContext.Tests.Data.Entities;
 using kDg.FileBaseContext.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using NetTopologySuite.IO.Converters;
 
 namespace FileBaseContext.Tests.Data;
 
@@ -29,6 +35,19 @@ public class DbTestContext : DbContext
         optionsBuilder.UseFileBaseContextDatabase(DatabaseName, null, services =>
         {
             services.AddMockFileSystem(_fileSystem);
+            var options = new JsonSerializerOptions()
+            {
+                AllowTrailingCommas = true,
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                WriteIndented = true,
+                Converters =
+                {
+                    new GeoJsonConverterFactory()
+                },
+                NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
+                ReferenceHandler = ReferenceHandler.Preserve,
+            };
+            services.AddSingleton(options);
         });
     }
 

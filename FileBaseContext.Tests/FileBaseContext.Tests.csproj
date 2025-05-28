@@ -15,6 +15,9 @@
 		<PackageReference Include="MSTest.TestAdapter" Version="3.0.4" />
 		<PackageReference Include="MSTest.TestFramework" Version="3.0.4" />
 		<PackageReference Include="coverlet.collector" Version="6.0.0" />
+		<PackageReference Include="NetTopologySuite" Version="2.6.0" />
+		<PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="4.0.0" />
+		<PackageReference Include="NetTopologySuite.IO.GeoJSON4STJ" Version="4.0.0" />
 		<PackageReference Include="System.IO.Abstractions" Version="20.0.4" />
 		<PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="20.0.4" />
 	</ItemGroup>

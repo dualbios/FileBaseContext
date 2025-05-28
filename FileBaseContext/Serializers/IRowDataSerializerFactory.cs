@@ -5,5 +5,7 @@ namespace kDg.FileBaseContext.Serializers;
 
 public interface IRowDataSerializerFactory
 {
-    public IRowDataSerializer Create<TKey>(IEntityType entityType, IPrincipalKeyValueFactory<TKey> keyValueFactory);
+    public IRowDataSerializer Create<TKey>(IEntityType entityType, 
+                                           IPrincipalKeyValueFactory<TKey> keyValueFactory, 
+                                           IServiceProvider serviceProvider);
 }

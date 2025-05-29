@@ -35,19 +35,12 @@ public class DbTestContext : DbContext
         optionsBuilder.UseFileBaseContextDatabase(DatabaseName, null, services =>
         {
             services.AddMockFileSystem(_fileSystem);
-            var options = new JsonSerializerOptions()
+            services.ConfigureJsonSerializerOptions(jsonOptions =>
             {
-                AllowTrailingCommas = true,
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                WriteIndented = true,
-                Converters =
-                {
-                    new GeoJsonConverterFactory()
-                },
-                NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
-                ReferenceHandler = ReferenceHandler.Preserve,
-            };
-            services.AddSingleton(options);
+                jsonOptions.Converters.Add(new GeoJsonConverterFactory());
+                jsonOptions.NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals;
+                jsonOptions.ReferenceHandler = ReferenceHandler.Preserve;
+            });
         });
     }
 

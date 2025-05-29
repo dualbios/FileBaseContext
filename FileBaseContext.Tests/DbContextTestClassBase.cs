@@ -65,19 +65,11 @@ namespace FileBaseContext.Tests
             options.UseFileBaseContextDatabase(typeof(TContext).Name, null, services =>
             {
                 services.AddMockFileSystem(FileSystem);
-                JsonSerializerOptions jsonSerializerOptions = new ()
+                services.ConfigureJsonSerializerOptions(jsonOptions =>
                 {
-                    AllowTrailingCommas = true,
-                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                    WriteIndented = true,
-                    Converters =
-                    {
-                        new GeoJsonConverterFactory()
-                    },
-                    NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
-                    ReferenceHandler = ReferenceHandler.Preserve,
-                };
-                services.AddSingleton(jsonSerializerOptions);
+                    jsonOptions.AllowTrailingCommas = true;
+                    jsonOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+                });
             });
         }
 

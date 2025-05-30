@@ -20,7 +20,7 @@ https://www.nuget.org/packages/FileBaseContext/
 | ---------------- | --------------- |
 | 1.0.x  | 7  |
 | 2.0.x thru 4.0.x  | 8  |
-| 5.0.x | 9  |
+| 5.0.x thru 5.1.x  | 9  |
 
 ## Configure Database Context
 
@@ -74,6 +74,22 @@ protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 }
 ```
 Please find an example in the SimplePositiveTests class in the test project
+
+## Update for 5.1.0
+
+You can now specify serialization options in `UseFileBaseContextDatabase`, for example adding a converter like [GeoJSON4STJ](https://www.nuget.org/packages/NetTopologySuite.IO.GeoJSON4STJ).Add commentMore actions
+
+```cs
+options.UseFileBaseContextDatabase(location: "userDb", applyServices: services =>
+{
+    services.ConfigureJsonSerializerOptions(options =>
+    {
+        options.Converters.Add(new GeoJsonConverterFactory());
+    });
+});
+```
+
+This will enable you to use [Spatial Data](https://learn.microsoft.com/en-us/ef/core/modeling/spatial) with the addition of the [NetTopologySuite](https://www.nuget.org/packages/NetTopologySuite) library.
 
 ## Update for 5.0.0
 

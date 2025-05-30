@@ -3,6 +3,12 @@ using kDg.FileBaseContext.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions.TestingHelpers;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Unicode;
+using Microsoft.Extensions.DependencyInjection;
+using NetTopologySuite.IO.Converters;
 
 namespace FileBaseContext.Tests
 {
@@ -59,6 +65,11 @@ namespace FileBaseContext.Tests
             options.UseFileBaseContextDatabase(typeof(TContext).Name, null, services =>
             {
                 services.AddMockFileSystem(FileSystem);
+                services.ConfigureJsonSerializerOptions(jsonOptions =>
+                {
+                    jsonOptions.AllowTrailingCommas = true;
+                    jsonOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+                });
             });
         }
 

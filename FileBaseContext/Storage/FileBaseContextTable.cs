@@ -31,7 +31,7 @@ public class FileBaseContextTable<TKey> : IFileBaseContextTable
         _options = options;
         _primaryKey = entityType.FindPrimaryKey();
         _keyValueFactory = _primaryKey.GetPrincipalKeyValueFactory<TKey>();
-        _serializer = serviceProvider.GetRequiredService<IRowDataSerializerFactory>().Create(entityType, _keyValueFactory);
+        _serializer = serviceProvider.GetRequiredService<IRowDataSerializerFactory>().Create(entityType, _keyValueFactory, serviceProvider);
 
         _fileManager.Init(_options);
 

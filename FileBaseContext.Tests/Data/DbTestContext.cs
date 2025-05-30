@@ -1,7 +1,14 @@
 ﻿using System.IO.Abstractions.TestingHelpers;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Unicode;
 using FileBaseContext.Tests.Data.Entities;
 using kDg.FileBaseContext.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.IO.Converters;
 
 namespace FileBaseContext.Tests.Data;
 
@@ -23,12 +30,17 @@ public class DbTestContext : DbContext
     public DbSet<Setting> Settings { get; set; }
     public DbSet<SimpleEntity> SimpleEntities { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Place> Places { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseFileBaseContextDatabase(DatabaseName, null, services =>
         {
             services.AddMockFileSystem(_fileSystem);
+            services.ConfigureJsonSerializerOptions(jsonOptions =>
+            {
+                jsonOptions.Converters.Add(new GeoJsonConverterFactory());
+            });
         });
     }
 
@@ -99,6 +111,13 @@ public class DbTestContext : DbContext
         };
 
         db.Users.Add(user);
+        
+        if (!db.Places.Any())
+        {
+            db.Places.Add(new Place() { Id = 1, Name = "St. Sophia's Cathedral", Location = new Point(30.5137373, 50.4529874) });
+            db.Places.Add(new Place() { Id = 2, Name = "Kyiv-Pechersk Lavra", Location = new Point(30.5529251, 50.4338034) });
+            db.Places.Add(new Place() { Id = 3, Name = "St. Michael's Golden-Domed Monastery", Location = new Point(30.5177251, 50.4533034) });
+        }
 
         db.SaveChanges();
     }

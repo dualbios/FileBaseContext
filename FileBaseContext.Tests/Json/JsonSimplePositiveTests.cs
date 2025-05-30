@@ -15,13 +15,14 @@ public class JsonSimplePositiveTests
         using var context = CreateDbContext();
         DbTestContext.InitDb(context);
 
-        Assert.AreEqual(6, FileSystem.AllFiles.Count());
+        Assert.AreEqual(7, FileSystem.AllFiles.Count());
         Assert.IsTrue(FileSystem.AllFiles.Any(x => x.Contains("Content.json")));
         Assert.IsTrue(FileSystem.AllFiles.Any(x => x.Contains("ContentEntry.json")));
         Assert.IsTrue(FileSystem.AllFiles.Any(x => x.Contains("Messurement.json")));
         Assert.IsTrue(FileSystem.AllFiles.Any(x => x.Contains("Setting.json")));
         Assert.IsTrue(FileSystem.AllFiles.Any(x => x.Contains("SimpleEntity.json")));
         Assert.IsTrue(FileSystem.AllFiles.Any(x => x.Contains("User.json")));
+        Assert.IsTrue(FileSystem.AllFiles.Any(x => x.Contains("Place.json")));
     }
 
     [TestMethod]
@@ -164,6 +165,18 @@ public class JsonSimplePositiveTests
         Assert.AreEqual(DateTime.Parse("01/01/0001 00:00:00"), user1.UpdatedOn);
         Assert.AreEqual("jane_smith_name", user1.Username);
     }
+    
+    [TestMethod]
+    public void VerifyPlaces()
+    {
+        using var context = CreateDbContext();
+        DbTestContext.InitDb(context);
+
+        Assert.AreEqual("St. Sophia's Cathedral", context.Places.Find(1).Name);
+        Assert.AreEqual(30.5529251, context.Places.Find(2).Location.X);
+        Assert.AreEqual(50.4533034, context.Places.Find(3).Location.Y);
+    }
+
 
     protected override DbTestContext CreateDbContext(DbContextOptions<DbTestContext> options)
     {

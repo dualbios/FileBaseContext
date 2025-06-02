@@ -77,7 +77,7 @@ Please find an example in the SimplePositiveTests class in the test project
 
 ## Update for 5.1.0
 
-You can now specify serialization options in `UseFileBaseContextDatabase`, for example adding a converter like [GeoJSON4STJ](https://www.nuget.org/packages/NetTopologySuite.IO.GeoJSON4STJ).Add commentMore actions
+You can now specify serialization options in `UseFileBaseContextDatabase`, for example adding a converter like [GeoJSON4STJ](https://www.nuget.org/packages/NetTopologySuite.IO.GeoJSON4STJ).
 
 ```cs
 options.UseFileBaseContextDatabase(location: "userDb", applyServices: services =>

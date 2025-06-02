@@ -5,21 +5,20 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>5.1.0</Version>
+		<Version>5.1.1</Version>
 		<Company>k.D.g</Company>
 		<Authors>Kous</Authors>
 		<Description>File based database provider for Entity Framework Core (for development purposes)</Description>
 		<Copyright>Copyright © Kostiantyn Usenko</Copyright>
 		<Title>FileBaseContext</Title>
-		<PackageLicenseUrl></PackageLicenseUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>Entity Framework Core;entity-framework-core;EF;Data;O/RM;FileBaseContext;FileDB;JSON;CSV</PackageTags>
 		<RepositoryUrl>https://github.com/dualbios/FileBaseContext</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/dualbios/FileBaseContext</PackageProjectUrl>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<DelaySign>false</DelaySign>
-		<AssemblyVersion>5.1.0.0</AssemblyVersion>
-		<FileVersion>5.1.0.0</FileVersion>
+		<AssemblyVersion>5.1.1.0</AssemblyVersion>
+		<FileVersion>5.1.1.0</FileVersion>
 		<RootNamespace>kDg.FileBaseContext</RootNamespace>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	</PropertyGroup>
@@ -32,7 +31,6 @@
 
 	<ItemGroup>
 		<None Include="..\LICENSE" Link="LICENSE">
-			<PackagePath></PackagePath>
 			<Pack>True</Pack>
 		</None>
 	</ItemGroup>

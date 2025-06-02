@@ -22,7 +22,7 @@ public class JsonSimplePositiveTests
         Assert.IsTrue(FileSystem.AllFiles.Any(x => x.Contains("Setting.json")));
         Assert.IsTrue(FileSystem.AllFiles.Any(x => x.Contains("SimpleEntity.json")));
         Assert.IsTrue(FileSystem.AllFiles.Any(x => x.Contains("User.json")));
-        Assert.IsTrue(FileSystem.AllFiles.Any(x => x.Contains("Place.json")));
+        Assert.IsTrue(FileSystem.AllFiles.Any(x => x.Contains("Places.json")));
     }
 
     [TestMethod]

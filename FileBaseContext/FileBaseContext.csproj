@@ -12,6 +12,7 @@
 		<Copyright>Copyright © Kostiantyn Usenko</Copyright>
 		<Title>FileBaseContext</Title>
 		<RepositoryType>git</RepositoryType>
+		<PackageLicenseUrl></PackageLicenseUrl>
 		<PackageTags>Entity Framework Core;entity-framework-core;EF;Data;O/RM;FileBaseContext;FileDB;JSON;CSV</PackageTags>
 		<RepositoryUrl>https://github.com/dualbios/FileBaseContext</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/dualbios/FileBaseContext</PackageProjectUrl>
@@ -31,6 +32,7 @@
 
 	<ItemGroup>
 		<None Include="..\LICENSE" Link="LICENSE">
+			<PackagePath></PackagePath>
 			<Pack>True</Pack>
 		</None>
 	</ItemGroup>

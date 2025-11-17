@@ -1,5 +1,6 @@
 using kDg.FileBaseContext.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
@@ -17,7 +18,7 @@ namespace kDg.FileBaseContext.Infrastructure.Query;
 
 public class FileBaseContextExpressionTranslatingExpressionVisitor : ExpressionVisitor
 {
-    private const string RuntimeParameterPrefix = QueryCompilationContext.QueryParameterPrefix + "entity_equality_";
+    private const string RuntimeParameterPrefix = "entity_equality_";
 
     private static readonly List<MethodInfo> SingleResultMethodInfos = new()
     {
@@ -404,24 +405,26 @@ public class FileBaseContextExpressionTranslatingExpressionVisitor : ExpressionV
     }
 
     protected override Expression VisitExtension(Expression extensionExpression)
-    {
-        switch (extensionExpression)
+        => extensionExpression switch
         {
-            case EntityProjectionExpression:
-            case EntityReferenceExpression:
-                return extensionExpression;
+            EntityProjectionExpression or EntityReferenceExpression
+                => extensionExpression,
 
-            case StructuralTypeShaperExpression entityShaperExpression:
-                return new EntityReferenceExpression(entityShaperExpression);
+            QueryParameterExpression queryParameter
+                => Expression.Call(
+                    GetParameterValueMethodInfo.MakeGenericMethod(queryParameter.Type),
+                    QueryCompilationContext.QueryContextParameter,
+                    Expression.Constant(queryParameter.Name)),
 
-            case ProjectionBindingExpression projectionBindingExpression:
-                return ((FileBaseContextQueryExpression)projectionBindingExpression.QueryExpression)
-                    .GetProjection(projectionBindingExpression);
+            StructuralTypeShaperExpression entityShaperExpression
+                => new EntityReferenceExpression(entityShaperExpression),
 
-            default:
-                return QueryCompilationContext.NotTranslatedExpression;
-        }
-    }
+            ProjectionBindingExpression projectionBindingExpression
+                => ((FileBaseContextQueryExpression)projectionBindingExpression.QueryExpression)
+                    .GetProjection(projectionBindingExpression),
+
+            _ => QueryCompilationContext.NotTranslatedExpression
+        };
 
     protected override Expression VisitInvocation(InvocationExpression invocationExpression)
         => QueryCompilationContext.NotTranslatedExpression;
@@ -848,17 +851,7 @@ public class FileBaseContextExpressionTranslatingExpressionVisitor : ExpressionV
     }
 
     protected override Expression VisitParameter(ParameterExpression parameterExpression)
-    {
-        if (parameterExpression.Name?.StartsWith(QueryCompilationContext.QueryParameterPrefix, StringComparison.Ordinal) == true)
-        {
-            return Expression.Call(
-                GetParameterValueMethodInfo.MakeGenericMethod(parameterExpression.Type),
-                QueryCompilationContext.QueryContextParameter,
-                Expression.Constant(parameterExpression.Name));
-        }
-
-        throw new InvalidOperationException("CoreStrings.TranslationFailed(parameterExpression.Print())");
-    }
+        => throw new InvalidOperationException(CoreStrings.TranslationFailed(parameterExpression.Print()));
 
     protected override Expression VisitTypeBinary(TypeBinaryExpression typeBinaryExpression)
     {
@@ -1063,7 +1056,7 @@ public class FileBaseContextExpressionTranslatingExpressionVisitor : ExpressionV
     }
 
     private static T GetParameterValue<T>(QueryContext queryContext, string parameterName)
-        => (T)queryContext.ParameterValues[parameterName]!;
+        => (T)queryContext.Parameters[parameterName]!;
 
     private static bool IsConvertedToNullable(Expression result, Expression original)
         => result.Type.IsNullableType()
@@ -1157,7 +1150,7 @@ public class FileBaseContextExpressionTranslatingExpressionVisitor : ExpressionV
 
                 var newParameterName =
                     $"{RuntimeParameterPrefix}"
-                    + $"{parameterName[QueryCompilationContext.QueryParameterPrefix.Length..]}_{property.Name}";
+                    + $"{parameterName}_{property.Name}";
 
                 rewrittenSource = _queryCompilationContext.RegisterRuntimeParameter(newParameterName, lambda);
                 break;
@@ -1300,7 +1293,7 @@ public class FileBaseContextExpressionTranslatingExpressionVisitor : ExpressionV
 
                 var newParameterName =
                     $"{RuntimeParameterPrefix}"
-                    + $"{parameterName[QueryCompilationContext.QueryParameterPrefix.Length..]}_{property.Name}";
+                    + $"{parameterName}_{property.Name}";
 
                 return _queryCompilationContext.RegisterRuntimeParameter(newParameterName, lambda);
 
@@ -1326,7 +1319,7 @@ public class FileBaseContextExpressionTranslatingExpressionVisitor : ExpressionV
 
     private static T ParameterValueExtractor<T>(QueryContext context, string baseParameterName, IProperty property)
     {
-        var baseParameter = context.ParameterValues[baseParameterName];
+        var baseParameter = context.Parameters[baseParameterName];
         return baseParameter == null ? (T)(object)null : (T)property.GetGetter().GetClrValue(baseParameter);
     }
 
@@ -1335,7 +1328,7 @@ public class FileBaseContextExpressionTranslatingExpressionVisitor : ExpressionV
         string baseParameterName,
         IProperty property)
     {
-        if (!(context.ParameterValues[baseParameterName] is IEnumerable<TEntity> baseListParameter))
+        if (!(context.Parameters[baseParameterName] is IEnumerable<TEntity> baseListParameter))
         {
             return null;
         }

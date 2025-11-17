@@ -79,7 +79,7 @@ public partial class FileBaseContextShapedQueryCompilingExpressionVisitor
                         variable = Expression.Parameter(entityShaperExpression.StructuralType.ClrType);
                         _variables.Add(variable);
                         var innerShaper =
-                            _FileBaseContextShapedQueryCompilingExpressionVisitor.InjectEntityMaterializers(entityShaperExpression);
+                            _FileBaseContextShapedQueryCompilingExpressionVisitor.InjectStructuralTypeMaterializers(entityShaperExpression);
                         innerShaper = Visit(innerShaper);
                         _expressions.Add(Expression.Assign(variable, innerShaper));
                         _mapping[key] = variable;

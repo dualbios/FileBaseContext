@@ -453,6 +453,14 @@ public class FileBaseContextQueryableMethodTranslatingExpressionVisitor : Querya
         return source;
     }
 
+    protected override ShapedQueryExpression TranslateRightJoin(
+        ShapedQueryExpression outer,
+        ShapedQueryExpression inner,
+        LambdaExpression outerKeySelector,
+        LambdaExpression innerKeySelector,
+        LambdaExpression resultSelector)
+        => null;
+
     protected override ShapedQueryExpression TranslateSelect(ShapedQueryExpression source, LambdaExpression selector)
     {
         if (selector.Body == selector.Parameters[0])

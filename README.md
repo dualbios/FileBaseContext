@@ -21,6 +21,7 @@ https://www.nuget.org/packages/FileBaseContext/
 | 1.0.x  | 7  |
 | 2.0.x thru 4.0.x  | 8  |
 | 5.0.x thru 5.1.x  | 9  |
+| 6.0.x  | 10  |
 
 ## Configure Database Context
 
@@ -74,6 +75,10 @@ protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 }
 ```
 Please find an example in the SimplePositiveTests class in the test project
+
+## Update for 6.0.0
+
+Upgraded to .NET 10 and EF Core 10
 
 ## Update for 5.1.0
 
